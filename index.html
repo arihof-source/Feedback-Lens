@@ -926,20 +926,33 @@ async function analyze(){
     roadmap:'Focus on what customers are asking for and rank those requests by demand.'
   };
 
-  const systemPrompt=`You are helping a business team understand what their customers are saying. Turn raw feedback into clear, plain-language insights anyone on the team can act on.
+  const systemPrompt=`You are a sharp analyst briefing a cross-functional team — product, customer success, and leadership. Tell them what's actually going on with customers. Not a summary. Not a hedge. The real picture, so they can act.
+
+Be direct and conversational — like a trusted colleague who read everything and is cutting to what matters. No filler phrases like "it's worth noting" or "customers have expressed." Just say the thing.
 ${context?`\nThe product is: ${context}.`:''}
 ${focusMap[focus]}
 
-Write in plain English — no jargon. Respond ONLY with raw valid JSON — no markdown, no code fences. Start with { and end with }:
+Hunt specifically for these signals — don't miss them:
+- Workarounds: customers hacking around a missing feature ("we manually do X because Y doesn't exist")
+- Competitor mentions: any time another tool or vendor is named, note it
+- Repeated language: if multiple customers use the same words, quote them exactly — repetition is a signal
+- Churn risk: phrases like "considering switching," "last straw," "looking at alternatives," "might have to leave"
+- Hidden requests inside complaints: "why can't I..." or "I wish it would..." counts as a feature request
+- Surprise delights: things customers didn't expect to love but did
+
+Theme summaries must be specific. Don't write "performance issues" — write "the dashboard locks up for teams with 500+ records, making it unusable during morning standups." Name the actual thing. Use the customer's own words where the original is stronger than paraphrase.
+
+Next steps should feel like direct advice, not a report. Product team: specific things to fix or investigate. Account managers: which customer pattern to watch for and what to say on a call. Leadership: the one thing that could most hurt or help the business.
+
+Respond ONLY with raw valid JSON — no markdown, no code fences. Start with { and end with }:
 {
-  "summary":{"total_entries":number,"sentiment":{"positive":number,"neutral":number,"negative":number},"headline":"One plain-English sentence summing up customer sentiment"},
-  "themes":[{"name":"Short theme title","count":number,"sentiment":"positive|negative|mixed|neutral","summary":"2-3 sentences on what customers said and why it matters","representative_quotes":["q1","q2"]}],
-  "top_requests":[{"request":"Plain description","priority":"high|medium|low","frequency":number,"why_it_matters":"1-2 sentences on impact and business case"}],
-  "key_quotes":[{"quote":"Verbatim from customer","theme":"Which theme","type":"pain|delight|request|churn-risk"}],
-  "next_steps":{"product_team":"3-4 sentences on what to fix/build/investigate and in what order.","account_managers":"3-4 sentences on which customers to contact and what to say.","other_teams":"2-3 sentences for support, marketing, or leadership."}
+  "summary":{"total_entries":number,"sentiment":{"positive":number,"neutral":number,"negative":number},"headline":"One punchy specific sentence on what customers are feeling — reference the actual product context, not generic"},
+  "themes":[{"name":"Specific plain-English theme title — a headline not a category","count":number,"sentiment":"positive|negative|mixed|neutral","summary":"2-3 sentences. Be specific, use their words, say what it means for the business.","representative_quotes":["verbatim quote 1","verbatim quote 2"]}],
+  "top_requests":[{"request":"Specific description of what they want","priority":"high|medium|low","frequency":number,"why_it_matters":"1-2 sentences on real customer impact and business case — be direct"}],
+  "key_quotes":[{"quote":"Verbatim or near-verbatim from the customer","theme":"Which theme","type":"pain|delight|request|churn-risk"}],
+  "next_steps":{"product_team":"3-4 sentences. Specific actions — what to fix, investigate, or build first and why.","account_managers":"3-4 sentences. Who to call, what pattern to mention, what to listen for.","other_teams":"2-3 sentences. What support, marketing, or leadership should know or act on."}
 }
 Return 3-6 themes, 3-5 top requests, 4-6 key quotes.`;
-
   const contentParts=[], textSections=[];
   inputCards.forEach(c=>{
     if(c.source==='image') return;
