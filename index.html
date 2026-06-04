@@ -6,62 +6,87 @@
   <title>FeedbackLens — Customer Feedback Analyzer</title>
   <style>
     :root {
-      --bg: #0f1117;
-      --surface: #1a1d27;
-      --surface2: #22263a;
-      --border: #2e3348;
-      --accent: #6366f1;
-      --accent-light: #818cf8;
-      --accent-dim: rgba(99,102,241,0.15);
-      --text: #e2e8f0;
-      --text-muted: #94a3b8;
-      --green: #22c55e;
-      --yellow: #eab308;
-      --red: #ef4444;
-      --orange: #f97316;
-      --blue: #38bdf8;
+      --bg: #f0f2f8;
+      --surface: #ffffff;
+      --surface2: #f7f8fc;
+      --surface3: #eef0f8;
+      --border: #e2e5f0;
+      --border-mid: #c9cede;
+      --accent: #4f46e5;
+      --accent-hover: #4338ca;
+      --accent-light: #eef2ff;
+      --accent-mid: #c7d2fe;
+      --text: #111827;
+      --text-muted: #6b7280;
+      --text-dim: #9ca3af;
+      --green: #16a34a;
+      --green-bg: #dcfce7;
+      --yellow: #d97706;
+      --yellow-bg: #fef3c7;
+      --red: #dc2626;
+      --red-bg: #fee2e2;
+      --orange: #ea580c;
+      --orange-bg: #ffedd5;
+      --blue: #0284c7;
+      --blue-bg: #e0f2fe;
+      --radius: 12px;
+      --radius-sm: 8px;
+      --shadow: 0 1px 3px rgba(0,0,0,0.07), 0 1px 2px rgba(0,0,0,0.04);
+      --shadow-md: 0 4px 12px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
       background: var(--bg);
       color: var(--text);
       min-height: 100vh;
       line-height: 1.6;
+      font-size: 15px;
     }
 
+    /* ── Icons ── */
+    .icon { display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    svg { display: block; }
+
+    /* ── Header ── */
     header {
+      background: var(--surface);
       border-bottom: 1px solid var(--border);
-      padding: 1rem 2rem;
+      padding: 0.9rem 2rem;
       display: flex;
       align-items: center;
-      gap: 0.75rem;
+      gap: 0.85rem;
+      box-shadow: var(--shadow);
+      position: sticky;
+      top: 0;
+      z-index: 10;
     }
 
-    .logo {
-      width: 32px; height: 32px;
+    .logo-mark {
+      width: 34px; height: 34px;
       background: var(--accent);
-      border-radius: 8px;
+      border-radius: 9px;
       display: flex; align-items: center; justify-content: center;
-      font-size: 1rem;
+      flex-shrink: 0;
     }
 
-    header h1 { font-size: 1.1rem; font-weight: 600; }
-    header span { color: var(--text-muted); font-size: 0.85rem; margin-left: 0.5rem; }
+    .header-text h1 { font-size: 1rem; font-weight: 800; letter-spacing: -0.02em; color: var(--text); }
+    .header-text p { font-size: 0.75rem; color: var(--text-muted); margin-top: 1px; }
 
+    /* ── Layout ── */
     .layout {
-      max-width: 1160px;
+      max-width: 1200px;
       margin: 0 auto;
-      padding: 2rem;
+      padding: 1.75rem 2rem;
       display: grid;
-      grid-template-columns: 420px 1fr;
+      grid-template-columns: 390px 1fr;
       gap: 1.5rem;
       align-items: start;
     }
 
-    @media (max-width: 900px) {
+    @media (max-width: 860px) {
       .layout { grid-template-columns: 1fr; padding: 1rem; }
     }
 
@@ -69,517 +94,591 @@
     .card {
       background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 1.5rem;
+      border-radius: var(--radius);
+      padding: 1.25rem;
+      box-shadow: var(--shadow);
     }
 
-    .card-title {
-      font-size: 0.78rem;
-      font-weight: 700;
-      color: var(--text-muted);
+    .card + .card { margin-top: 1rem; }
+
+    .card-label {
+      font-size: 0.68rem;
+      font-weight: 800;
+      color: var(--text-dim);
       text-transform: uppercase;
-      letter-spacing: 0.06em;
-      margin-bottom: 1.1rem;
+      letter-spacing: 0.09em;
+      margin-bottom: 0.85rem;
     }
 
-    /* ── Form elements ── */
+    /* ── Form ── */
     label {
       display: block;
-      font-size: 0.82rem;
+      font-size: 0.79rem;
+      font-weight: 500;
       color: var(--text-muted);
-      margin-bottom: 0.35rem;
-      margin-top: 1rem;
+      margin-bottom: 0.3rem;
+      margin-top: 0.9rem;
     }
     label:first-of-type { margin-top: 0; }
 
-    input[type="text"], input[type="password"], textarea, select {
+    input[type="text"], textarea, select {
       width: 100%;
       background: var(--surface2);
       border: 1px solid var(--border);
-      border-radius: 8px;
+      border-radius: var(--radius-sm);
       color: var(--text);
-      padding: 0.6rem 0.8rem;
-      font-size: 0.88rem;
+      padding: 0.6rem 0.85rem;
+      font-size: 0.875rem;
       outline: none;
-      transition: border-color 0.15s;
       font-family: inherit;
+      transition: border-color 0.15s, box-shadow 0.15s;
     }
-
-    input:focus, textarea:focus, select:focus { border-color: var(--accent); }
-    textarea { resize: vertical; min-height: 120px; }
-    select option { background: var(--surface2); }
-
-    .api-note {
-      margin-top: 0.5rem;
-      padding: 0.65rem 0.85rem;
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      border-radius: 7px;
-      font-size: 0.76rem;
-      color: var(--text-muted);
-      line-height: 1.55;
-      display: flex;
-      gap: 0.5rem;
+    input:focus, textarea:focus, select:focus {
+      border-color: var(--accent-mid);
+      box-shadow: 0 0 0 3px rgba(79,70,229,0.1);
+      background: var(--surface);
     }
-    .api-note a { color: var(--accent-light); text-decoration: none; }
-    .api-note a:hover { text-decoration: underline; }
+    textarea { resize: vertical; min-height: 110px; line-height: 1.55; }
+    select { cursor: pointer; }
 
     /* ── Buttons ── */
     .btn {
       display: inline-flex;
       align-items: center;
+      justify-content: center;
       gap: 0.4rem;
-      padding: 0.55rem 1rem;
-      border-radius: 7px;
+      padding: 0.6rem 1.1rem;
+      border-radius: var(--radius-sm);
       font-size: 0.85rem;
       font-weight: 600;
       border: none;
       cursor: pointer;
       transition: all 0.15s;
       font-family: inherit;
+      line-height: 1;
     }
 
     .btn-primary {
       background: var(--accent);
       color: white;
       width: 100%;
-      justify-content: center;
-      padding: 0.7rem;
+      padding: 0.75rem;
       font-size: 0.9rem;
-      margin-top: 1.25rem;
+      margin-top: 1rem;
+      border-radius: var(--radius-sm);
+      box-shadow: 0 2px 8px rgba(79,70,229,0.3);
     }
-    .btn-primary:hover:not(:disabled) { background: var(--accent-light); }
-    .btn-primary:disabled { opacity: 0.45; cursor: not-allowed; }
+    .btn-primary:hover:not(:disabled) { background: var(--accent-hover); box-shadow: 0 4px 12px rgba(79,70,229,0.35); }
+    .btn-primary:disabled { opacity: 0.45; cursor: not-allowed; box-shadow: none; }
 
-    .btn-ghost {
-      background: transparent;
-      color: var(--text-muted);
-      border: 1px dashed var(--border);
+    .btn-add {
       width: 100%;
-      justify-content: center;
-      margin-top: 0.75rem;
+      background: var(--surface2);
+      border: 1.5px dashed var(--border-mid);
+      color: var(--text-muted);
       padding: 0.6rem;
+      margin-top: 0.6rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.82rem;
+      font-weight: 600;
     }
-    .btn-ghost:hover { border-color: var(--accent); color: var(--accent-light); }
+    .btn-add:hover { border-color: var(--accent-mid); color: var(--accent); background: var(--accent-light); }
+
+    .btn-download {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      font-size: 0.78rem;
+      padding: 0.42rem 0.85rem;
+      gap: 0.35rem;
+    }
+    .btn-download:hover { border-color: var(--accent-mid); color: var(--accent); background: var(--accent-light); }
 
     .btn-icon {
       background: transparent;
-      color: var(--text-muted);
       border: none;
-      padding: 0.2rem 0.4rem;
-      font-size: 1rem;
-      line-height: 1;
-      border-radius: 4px;
+      color: var(--text-dim);
+      padding: 0.25rem;
+      border-radius: 5px;
+      display: inline-flex;
+      align-items: center;
+      cursor: pointer;
     }
-    .btn-icon:hover { background: var(--surface2); color: var(--text); }
+    .btn-icon:hover { background: var(--surface3); color: var(--text-muted); }
+
+    /* ── Source picker ── */
+    .source-type-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.45rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .source-btn {
+      background: var(--surface2);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 0.65rem 0.4rem;
+      cursor: pointer;
+      transition: all 0.12s;
+      text-align: center;
+      font-family: inherit;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.3rem;
+    }
+    .source-btn:hover { border-color: var(--accent-mid); background: var(--accent-light); }
+    .source-btn .sb-icon { color: var(--accent); }
+    .source-btn .sb-label { font-size: 0.67rem; font-weight: 700; color: var(--text-muted); line-height: 1.2; }
+    .source-btn:hover .sb-label { color: var(--accent); }
 
     /* ── Input cards ── */
-    #inputs-list { display: flex; flex-direction: column; gap: 0.85rem; }
+    #inputs-list { display: flex; flex-direction: column; gap: 0.7rem; }
 
     .input-card {
       background: var(--surface2);
       border: 1px solid var(--border);
-      border-radius: 10px;
+      border-radius: var(--radius-sm);
       overflow: hidden;
     }
 
     .input-card-header {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
-      padding: 0.6rem 0.75rem;
+      justify-content: space-between;
+      padding: 0.45rem 0.75rem;
+      background: var(--surface3);
       border-bottom: 1px solid var(--border);
-      background: rgba(0,0,0,0.15);
     }
 
-    .source-select {
-      flex: 1;
-      background: transparent;
-      border: none;
-      color: var(--accent-light);
-      font-size: 0.8rem;
-      font-weight: 600;
-      padding: 0;
-      outline: none;
-      cursor: pointer;
+    .input-card-source {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.73rem;
+      font-weight: 700;
+      color: var(--accent);
     }
-    .source-select option { background: var(--surface); color: var(--text); }
 
-    .input-card-body { padding: 0.75rem; }
+    .input-card-body { padding: 0.65rem 0.75rem; }
 
     .input-card textarea {
-      min-height: 100px;
+      min-height: 90px;
       background: transparent;
       border: none;
       padding: 0;
-      font-size: 0.83rem;
+      font-size: 0.82rem;
       color: var(--text);
-      resize: vertical;
     }
-    .input-card textarea:focus { outline: none; border: none; box-shadow: none; }
+    .input-card textarea:focus { outline: none; box-shadow: none; border: none; background: transparent; }
 
     .input-card-footer {
-      padding: 0.4rem 0.75rem;
+      padding: 0.3rem 0.75rem;
       border-top: 1px solid var(--border);
+      font-size: 0.69rem;
+      color: var(--text-dim);
       display: flex;
       align-items: center;
       justify-content: space-between;
-      font-size: 0.72rem;
-      color: var(--text-muted);
     }
 
-    .speaker-field {
+    .speaker-row {
       display: flex;
       align-items: center;
       gap: 0.5rem;
       margin-top: 0.5rem;
     }
-    .speaker-field label { margin: 0; font-size: 0.75rem; white-space: nowrap; }
-    .speaker-field input { font-size: 0.78rem; padding: 0.3rem 0.5rem; }
+    .speaker-row label { margin: 0; font-size: 0.72rem; white-space: nowrap; }
+    .speaker-row input { font-size: 0.78rem; padding: 0.3rem 0.5rem; }
 
-    /* ── Image drop zone ── */
-    .image-drop-zone {
-      border: 2px dashed var(--border);
-      border-radius: 8px;
-      padding: 1.5rem;
+    /* ── Image drop ── */
+    .drop-zone {
+      border: 2px dashed var(--border-mid);
+      border-radius: var(--radius-sm);
+      padding: 1.5rem 1rem;
       text-align: center;
       cursor: pointer;
       transition: all 0.15s;
       position: relative;
+      background: var(--surface);
     }
-    .image-drop-zone:hover, .image-drop-zone.drag-over {
-      border-color: var(--accent);
-      background: var(--accent-dim);
-    }
-    .image-drop-zone input[type="file"] {
-      position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
-    }
-    .image-drop-zone .drop-icon { font-size: 1.75rem; margin-bottom: 0.4rem; opacity: 0.5; }
-    .image-drop-zone p { font-size: 0.8rem; color: var(--text-muted); }
-    .image-drop-zone .drop-hint { font-size: 0.72rem; color: var(--text-muted); margin-top: 0.25rem; opacity: 0.7; }
+    .drop-zone:hover, .drop-zone.over { border-color: var(--accent-mid); background: var(--accent-light); }
+    .drop-zone input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+    .drop-zone .dz-icon { color: var(--text-dim); margin-bottom: 0.4rem; }
+    .drop-zone p { font-size: 0.78rem; color: var(--text-muted); font-weight: 500; }
+    .drop-zone small { font-size: 0.69rem; color: var(--text-dim); }
 
-    .image-preview-wrap {
-      position: relative;
-      display: inline-block;
-      max-width: 100%;
-    }
-    .image-preview-wrap img {
-      max-width: 100%;
-      max-height: 200px;
-      border-radius: 6px;
-      display: block;
-    }
-    .image-preview-wrap .clear-img {
-      position: absolute;
-      top: 4px; right: 4px;
-      background: rgba(0,0,0,0.7);
-      color: white;
-      border: none;
-      border-radius: 50%;
-      width: 22px; height: 22px;
-      font-size: 0.8rem;
-      cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-    }
+    .img-preview { position: relative; display: inline-block; max-width: 100%; margin-top: 0.5rem; }
+    .img-preview img { max-width: 100%; max-height: 180px; border-radius: 6px; display: block; border: 1px solid var(--border); }
+    .img-clear { position: absolute; top: 4px; right: 4px; background: rgba(0,0,0,0.6); color: white; border: none; border-radius: 50%; width: 20px; height: 20px; font-size: 0.7rem; cursor: pointer; display: flex; align-items: center; justify-content: center; }
 
-    /* ── Totals bar ── */
-    .totals-bar {
-      margin-top: 0.75rem;
-      padding: 0.5rem 0.75rem;
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      border-radius: 7px;
-      font-size: 0.78rem;
-      color: var(--text-muted);
-      display: flex;
-      gap: 1rem;
-      flex-wrap: wrap;
+    /* ── Totals pill ── */
+    .totals-pill {
+      display: none;
+      margin-top: 0.6rem;
+      padding: 0.42rem 0.85rem;
+      background: var(--accent-light);
+      border: 1px solid var(--accent-mid);
+      border-radius: 99px;
+      font-size: 0.74rem;
+      color: var(--accent);
+      font-weight: 600;
+      gap: 0.5rem;
+      align-items: center;
     }
-    .totals-bar span { color: var(--accent-light); font-weight: 600; }
 
     /* ── Results ── */
-    .results-col { display: flex; flex-direction: column; gap: 1.25rem; }
+    .results-col { display: flex; flex-direction: column; gap: 1rem; }
 
-    .stats-grid {
+    .stats-row {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 0.85rem;
     }
-    @media (max-width: 600px) { .stats-grid { grid-template-columns: 1fr; } }
+    @media (max-width: 600px) { .stats-row { grid-template-columns: 1fr; } }
 
     .stat-card {
-      background: var(--surface2);
+      background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: 10px;
+      border-radius: var(--radius-sm);
       padding: 1rem 1.1rem;
+      box-shadow: var(--shadow);
     }
-    .stat-label { font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.2rem; }
-    .stat-value { font-size: 1.8rem; font-weight: 700; line-height: 1.1; }
-    .stat-sub { font-size: 0.75rem; color: var(--text-muted); margin-top: 0.2rem; }
+    .stat-label { font-size: 0.67rem; font-weight: 800; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 0.25rem; }
+    .stat-value { font-size: 1.85rem; font-weight: 800; line-height: 1.1; letter-spacing: -0.03em; color: var(--accent); }
+    .stat-sub { font-size: 0.72rem; color: var(--text-muted); margin-top: 0.2rem; }
 
-    .sentiment-bar {
-      display: flex;
-      height: 7px;
-      border-radius: 4px;
+    .sentiment-bar { display: flex; height: 6px; border-radius: 3px; overflow: hidden; margin-top: 0.5rem; gap: 2px; }
+    .seg { border-radius: 2px; transition: width 0.5s ease; }
+
+    /* ── Results card ── */
+    .results-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
       overflow: hidden;
-      margin-top: 0.5rem;
-      gap: 2px;
+      box-shadow: var(--shadow);
     }
-    .seg { border-radius: 3px; transition: width 0.5s ease; }
+
+    .results-card-header {
+      padding: 0.8rem 1.1rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--surface2);
+    }
 
     /* ── Tabs ── */
-    .tabs {
-      display: flex;
-      gap: 0.4rem;
-      flex-wrap: wrap;
-    }
+    .tabs { display: flex; gap: 0.2rem; }
     .tab {
-      padding: 0.4rem 0.9rem;
+      padding: 0.38rem 0.8rem;
       border-radius: 6px;
-      font-size: 0.8rem;
-      font-weight: 600;
+      font-size: 0.77rem;
+      font-weight: 700;
       cursor: pointer;
-      border: 1px solid var(--border);
+      border: 1px solid transparent;
       background: transparent;
       color: var(--text-muted);
       transition: all 0.12s;
       font-family: inherit;
     }
-    .tab.active { background: var(--accent-dim); border-color: var(--accent); color: var(--accent-light); }
-    .tab-panel { display: none; }
+    .tab:hover { color: var(--text); background: var(--surface3); }
+    .tab.active { background: var(--accent); color: white; border-color: var(--accent); }
+
+    .tab-panel { display: none; padding: 1.1rem; }
     .tab-panel.active { display: block; }
 
     /* ── Theme cards ── */
-    .themes-list { display: flex; flex-direction: column; gap: 0.7rem; }
+    .themes-list { display: flex; flex-direction: column; gap: 0.6rem; }
     .theme-item {
       background: var(--surface2);
       border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 1rem;
+      border-radius: var(--radius-sm);
+      padding: 0.95rem 1.1rem;
     }
-    .theme-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.4rem; }
-    .theme-name { font-weight: 700; font-size: 0.95rem; }
-    .theme-count {
-      font-size: 0.72rem;
-      background: var(--accent-dim);
-      color: var(--accent-light);
-      padding: 0.15rem 0.55rem;
-      border-radius: 999px;
+    .theme-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 0.75rem; margin-bottom: 0.45rem; }
+    .theme-name { font-weight: 700; font-size: 0.9rem; }
+    .theme-summary { font-size: 0.81rem; color: var(--text-muted); line-height: 1.55; margin-bottom: 0.55rem; }
+    .theme-foot { display: flex; align-items: center; gap: 0.5rem; }
+
+    .sentiment-pill {
+      font-size: 0.67rem;
       font-weight: 700;
-    }
-    .theme-summary { font-size: 0.84rem; color: var(--text-muted); margin-bottom: 0.5rem; line-height: 1.55; }
-    .theme-sentiment {
+      padding: 0.12rem 0.55rem;
+      border-radius: 99px;
       display: inline-flex;
       align-items: center;
       gap: 0.25rem;
-      font-size: 0.72rem;
-      font-weight: 700;
-      padding: 0.12rem 0.5rem;
-      border-radius: 999px;
     }
-    .sent-positive { background: rgba(34,197,94,0.12); color: var(--green); }
-    .sent-negative { background: rgba(239,68,68,0.12); color: var(--red); }
-    .sent-mixed { background: rgba(234,179,8,0.12); color: var(--yellow); }
-    .sent-neutral { background: rgba(148,163,184,0.12); color: var(--text-muted); }
+    .s-positive { background: var(--green-bg); color: var(--green); }
+    .s-negative { background: var(--red-bg); color: var(--red); }
+    .s-mixed { background: var(--yellow-bg); color: var(--yellow); }
+    .s-neutral { background: var(--surface3); color: var(--text-muted); }
 
-    /* ── Top asks ── */
-    .asks-list { display: flex; flex-direction: column; gap: 0.55rem; }
-    .ask-item {
+    .count-pill { font-size: 0.68rem; font-weight: 600; color: var(--text-dim); }
+
+    /* ── Requests ── */
+    .requests-list { display: flex; flex-direction: column; gap: 0.5rem; }
+    .request-item {
       display: flex;
+      gap: 0.75rem;
       align-items: flex-start;
-      gap: 0.7rem;
       background: var(--surface2);
       border: 1px solid var(--border);
-      border-radius: 8px;
+      border-radius: var(--radius-sm);
       padding: 0.85rem 1rem;
     }
-    .ask-rank {
-      min-width: 26px; height: 26px;
+    .req-rank {
+      width: 24px; height: 24px; flex-shrink: 0;
       border-radius: 50%;
-      background: var(--accent-dim);
-      color: var(--accent-light);
+      background: var(--accent-light);
+      color: var(--accent);
       display: flex; align-items: center; justify-content: center;
-      font-size: 0.75rem; font-weight: 700;
+      font-size: 0.7rem; font-weight: 800;
     }
-    .ask-body { flex: 1; }
-    .ask-name { font-weight: 600; font-size: 0.9rem; }
-    .ask-why { font-size: 0.82rem; color: var(--text-muted); margin-top: 0.2rem; line-height: 1.5; }
-    .priority-badge {
-      font-size: 0.68rem;
-      font-weight: 700;
-      padding: 0.12rem 0.45rem;
-      border-radius: 999px;
+    .req-body { flex: 1; min-width: 0; }
+    .req-top { display: flex; align-items: center; gap: 0.45rem; flex-wrap: wrap; margin-bottom: 0.2rem; }
+    .req-name { font-weight: 700; font-size: 0.88rem; }
+    .req-why { font-size: 0.8rem; color: var(--text-muted); line-height: 1.5; }
+    .prio {
+      font-size: 0.64rem; font-weight: 800;
+      padding: 0.1rem 0.45rem;
+      border-radius: 99px;
       text-transform: uppercase;
       letter-spacing: 0.04em;
     }
-    .prio-high { background: rgba(239,68,68,0.12); color: var(--red); }
-    .prio-medium { background: rgba(234,179,8,0.12); color: var(--yellow); }
-    .prio-low { background: rgba(34,197,94,0.12); color: var(--green); }
+    .prio-high { background: var(--red-bg); color: var(--red); }
+    .prio-medium { background: var(--yellow-bg); color: var(--yellow); }
+    .prio-low { background: var(--green-bg); color: var(--green); }
+    .freq-label { font-size: 0.68rem; color: var(--text-dim); }
 
     /* ── Quotes ── */
-    .quotes-list { display: flex; flex-direction: column; gap: 0.7rem; }
+    .quotes-list { display: flex; flex-direction: column; gap: 0.6rem; }
     .quote-item {
       border-left: 3px solid var(--accent);
       padding: 0.7rem 1rem;
       background: var(--surface2);
-      border-radius: 0 8px 8px 0;
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
     }
-    .quote-text { font-size: 0.87rem; font-style: italic; color: var(--text); line-height: 1.55; }
-    .quote-meta { font-size: 0.72rem; color: var(--text-muted); margin-top: 0.3rem; }
+    .quote-text { font-size: 0.85rem; font-style: italic; line-height: 1.55; color: var(--text); }
+    .quote-meta { font-size: 0.69rem; color: var(--text-muted); margin-top: 0.3rem; display: flex; align-items: center; gap: 0.4rem; }
+    .quote-type { font-weight: 700; display: inline-flex; align-items: center; gap: 0.2rem; }
+    .qt-pain { border-left-color: var(--red); }
+    .qt-delight { border-left-color: var(--green); }
+    .qt-request { border-left-color: var(--accent); }
+    .qt-churn-risk { border-left-color: var(--orange); }
 
     /* ── Next steps ── */
-    .next-steps-grid { display: flex; flex-direction: column; gap: 1rem; }
-
-    .team-block {
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      overflow: hidden;
-    }
-    .team-block-header {
-      padding: 0.65rem 1rem;
+    .steps-grid { display: flex; flex-direction: column; gap: 0.7rem; }
+    .step-block { border: 1px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; }
+    .step-header {
+      padding: 0.55rem 1rem;
+      font-size: 0.69rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
       display: flex;
       align-items: center;
-      gap: 0.6rem;
-      font-size: 0.78rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
+      gap: 0.5rem;
     }
-    .team-product .team-block-header { background: rgba(99,102,241,0.12); color: var(--accent-light); }
-    .team-account .team-block-header { background: rgba(34,197,94,0.1); color: var(--green); }
-    .team-other .team-block-header { background: rgba(56,189,248,0.1); color: var(--blue); }
-
-    .team-block-body {
-      padding: 1rem;
-      font-size: 0.87rem;
-      color: var(--text);
-      line-height: 1.65;
-      background: var(--surface2);
-    }
+    .step-body { padding: 0.85rem 1rem; font-size: 0.84rem; line-height: 1.65; color: var(--text); background: var(--surface2); }
+    .step-product .step-header { background: var(--accent-light); color: var(--accent); border-bottom: 1px solid var(--accent-mid); }
+    .step-account .step-header { background: var(--green-bg); color: var(--green); border-bottom: 1px solid #bbf7d0; }
+    .step-other .step-header { background: var(--blue-bg); color: var(--blue); border-bottom: 1px solid #bae6fd; }
 
     /* ── States ── */
     .empty-state {
       text-align: center;
-      padding: 4rem 2rem;
+      padding: 3.5rem 2rem;
       color: var(--text-muted);
     }
-    .empty-icon { font-size: 2.5rem; margin-bottom: 0.75rem; opacity: 0.35; }
-    .empty-state h3 { font-size: 1rem; margin-bottom: 0.4rem; color: var(--text); }
-    .empty-state p { font-size: 0.84rem; max-width: 320px; margin: 0 auto; }
+    .empty-icon { margin: 0 auto 1rem; color: var(--text-dim); }
+    .empty-state h3 { font-size: 0.95rem; font-weight: 700; margin-bottom: 0.4rem; color: var(--text); }
+    .empty-state p { font-size: 0.82rem; max-width: 300px; margin: 0 auto; line-height: 1.6; }
 
-    .loading-box { text-align: center; padding: 3rem; }
+    .loading-box { text-align: center; padding: 2.75rem; }
     .spinner {
-      width: 38px; height: 38px;
-      border: 3px solid var(--border);
+      width: 36px; height: 36px;
+      border: 2.5px solid var(--border);
       border-top-color: var(--accent);
       border-radius: 50%;
-      animation: spin 0.75s linear infinite;
+      animation: spin 0.7s linear infinite;
       margin: 0 auto 1rem;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
-    .loading-box p { color: var(--text-muted); font-size: 0.88rem; }
-    .loading-step { margin-top: 0.4rem; font-size: 0.8rem; color: var(--accent-light); }
+    .loading-box p { color: var(--text-muted); font-size: 0.85rem; }
+    .loading-step { margin-top: 0.4rem; font-size: 0.78rem; color: var(--accent); }
 
     .error-box {
-      background: rgba(239,68,68,0.1);
-      border: 1px solid rgba(239,68,68,0.3);
-      border-radius: 8px;
-      padding: 0.8rem 1rem;
+      background: var(--red-bg);
+      border: 1px solid #fca5a5;
+      border-radius: var(--radius-sm);
+      padding: 0.75rem 0.9rem;
       color: var(--red);
-      font-size: 0.84rem;
+      font-size: 0.82rem;
       margin-top: 0.75rem;
+      line-height: 1.5;
     }
 
     .hidden { display: none; }
+
+    .example-btns { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+    .btn-example {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      font-size: 0.74rem;
+      padding: 0.38rem 0.8rem;
+      border-radius: 99px;
+      cursor: pointer;
+      font-family: inherit;
+      font-weight: 600;
+      transition: all 0.12s;
+    }
+    .btn-example:hover { border-color: var(--accent-mid); color: var(--accent); background: var(--accent-light); }
+
+    .divider { height: 1px; background: var(--border); margin: 0.5rem 0; }
   </style>
 </head>
 <body>
 
 <header>
-  <div class="logo">🔍</div>
-  <h1>FeedbackLens</h1>
-  <span>Understand what your customers are telling you</span>
+  <div class="logo-mark">
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+      <circle cx="7.5" cy="7.5" r="5" stroke="white" stroke-width="2"/>
+      <line x1="11.5" y1="11.5" x2="16" y2="16" stroke="white" stroke-width="2" stroke-linecap="round"/>
+      <line x1="5" y1="7.5" x2="10" y2="7.5" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="7.5" y1="5" x2="7.5" y2="10" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+    </svg>
+  </div>
+  <div class="header-text">
+    <h1>FeedbackLens</h1>
+    <p>Turn customer feedback into clear actions for every team</p>
+  </div>
 </header>
 
 <div class="layout">
 
-  <!-- ── Left: inputs ── -->
+  <!-- ── Left panel ── -->
   <div>
     <div class="card">
-      <div class="card-title">Setup</div>
-
-      <label for="context" style="margin-top:0">What's your product? <span style="font-weight:400">(optional but helps)</span></label>
-      <input type="text" id="context" placeholder="e.g. temperature monitoring software for food & pharma companies" />
+      <div class="card-label">Your product</div>
+      <input type="text" id="context" placeholder="e.g. temperature monitoring software for food and pharma companies" />
     </div>
 
-    <div class="card" style="margin-top:1rem">
-      <div class="card-title">Your feedback sources</div>
-
+    <div class="card">
+      <div class="card-label">Feedback sources</div>
       <div id="inputs-list"></div>
+      <button class="btn-add" id="add-btn" onclick="showAddSource()">
+        <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><line x1="6.5" y1="1" x2="6.5" y2="12" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/><line x1="1" y1="6.5" x2="12" y2="6.5" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/></svg>
+        Add a source
+      </button>
+      <div class="totals-pill" id="totals-pill"></div>
+    </div>
 
-      <button class="btn btn-ghost" onclick="addInput()">+ Add another source</button>
-
-      <div class="totals-bar" id="totals-bar" style="display:none">
-        Loading <span id="total-summary">—</span>
+    <!-- Source picker -->
+    <div class="card hidden" id="source-picker">
+      <div class="card-label">What kind of source?</div>
+      <div class="source-type-grid">
+        <button class="source-btn" onclick="addInput('feedback')">
+          <span class="sb-icon">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="2" y="3" width="16" height="14" rx="2" stroke="currentColor" stroke-width="1.5"/><line x1="5" y1="7" x2="15" y2="7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="5" y1="10" x2="15" y2="10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="5" y1="13" x2="11" y2="13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          </span>
+          <span class="sb-label">Pasted feedback</span>
+        </button>
+        <button class="source-btn" onclick="addInput('fathom')">
+          <span class="sb-icon">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="7" y="2" width="6" height="10" rx="3" stroke="currentColor" stroke-width="1.5"/><path d="M4 10a6 6 0 0 0 12 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="10" y1="16" x2="10" y2="19" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          </span>
+          <span class="sb-label">Fathom</span>
+        </button>
+        <button class="source-btn" onclick="addInput('fireflies')">
+          <span class="sb-icon">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="7" y="2" width="6" height="10" rx="3" stroke="currentColor" stroke-width="1.5"/><path d="M4 10a6 6 0 0 0 12 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="10" y1="16" x2="10" y2="19" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          </span>
+          <span class="sb-label">Fireflies</span>
+        </button>
+        <button class="source-btn" onclick="addInput('otter')">
+          <span class="sb-icon">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="7" y="2" width="6" height="10" rx="3" stroke="currentColor" stroke-width="1.5"/><path d="M4 10a6 6 0 0 0 12 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="10" y1="16" x2="10" y2="19" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          </span>
+          <span class="sb-label">Otter</span>
+        </button>
+        <button class="source-btn" onclick="addInput('gong')">
+          <span class="sb-icon">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="7" y="2" width="6" height="10" rx="3" stroke="currentColor" stroke-width="1.5"/><path d="M4 10a6 6 0 0 0 12 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="10" y1="16" x2="10" y2="19" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          </span>
+          <span class="sb-label">Gong</span>
+        </button>
+        <button class="source-btn" onclick="addInput('image')">
+          <span class="sb-icon">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="2" y="3" width="16" height="14" rx="2" stroke="currentColor" stroke-width="1.5"/><circle cx="7" cy="8" r="1.5" stroke="currentColor" stroke-width="1.25"/><path d="M2 14l4-4 3 3 3-3 4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+          <span class="sb-label">Screenshot</span>
+        </button>
       </div>
+    </div>
 
-      <div style="margin-top:1.1rem">
-        <label for="analysis-type" style="margin-top:0">What do you want to focus on?</label>
-        <select id="analysis-type">
-          <option value="balanced">Overall picture — themes, feelings, and requests</option>
-          <option value="churn">At-risk customers — surface complaints and warning signs</option>
-          <option value="growth">Happy customers — what's working and why they stay</option>
-          <option value="roadmap">What to build next — rank feature requests by demand</option>
-        </select>
-      </div>
-
-      <button class="btn btn-primary" id="analyze-btn" onclick="analyze()">Analyze feedback</button>
+    <div class="card">
+      <div class="card-label">Focus</div>
+      <select id="analysis-type">
+        <option value="balanced">Overall picture — themes, feelings, and requests</option>
+        <option value="churn">At-risk customers — surface complaints and warning signs</option>
+        <option value="growth">Happy customers — what's working and why they stay</option>
+        <option value="roadmap">What to build next — rank feature requests by demand</option>
+      </select>
+      <button class="btn btn-primary" id="analyze-btn" onclick="analyze()">
+        <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M7.5 1L9.2 5.5H14L10.4 8.5L11.7 13L7.5 10.3L3.3 13L4.6 8.5L1 5.5H5.8L7.5 1Z" stroke="white" stroke-width="1.4" stroke-linejoin="round"/></svg>
+        Analyze feedback
+      </button>
       <div id="error-box" class="error-box hidden"></div>
     </div>
 
-    <!-- Examples -->
-    <div class="card" style="margin-top:1rem">
-      <div class="card-title">Try an example</div>
-      <div style="display:flex;flex-wrap:wrap;gap:0.5rem;margin-top:0.25rem">
-        <button class="btn" style="background:var(--surface2);border:1px solid var(--border);font-size:0.8rem" onclick="loadExample('saas')">SaaS feedback</button>
-        <button class="btn" style="background:var(--surface2);border:1px solid var(--border);font-size:0.8rem" onclick="loadExample('coldchain')">Cold chain feedback</button>
-        <button class="btn" style="background:var(--surface2);border:1px solid var(--border);font-size:0.8rem" onclick="loadExample('mixed')">Mixed sources</button>
+    <div class="card">
+      <div class="card-label" style="margin-bottom:0.6rem">Try an example</div>
+      <div class="example-btns">
+        <button class="btn-example" onclick="loadExample('saas')">SaaS product</button>
+        <button class="btn-example" onclick="loadExample('coldchain')">Cold chain</button>
+        <button class="btn-example" onclick="loadExample('mixed')">Mixed sources</button>
       </div>
     </div>
   </div>
 
-  <!-- ── Right: results ── -->
+  <!-- ── Right panel ── -->
   <div class="results-col">
 
-    <!-- Empty -->
     <div class="card empty-state" id="empty-state">
-      <div class="empty-icon">💬</div>
-      <h3>Add your feedback sources on the left</h3>
-      <p>Mix and match — paste support tickets, drop in a call transcript, or upload a screenshot. Then click Analyze.</p>
+      <div class="empty-icon">
+        <svg width="48" height="48" viewBox="0 0 48 48" fill="none"><rect x="6" y="8" width="36" height="32" rx="4" stroke="#d1d5db" stroke-width="2"/><line x1="13" y1="17" x2="35" y2="17" stroke="#d1d5db" stroke-width="2" stroke-linecap="round"/><line x1="13" y1="23" x2="35" y2="23" stroke="#d1d5db" stroke-width="2" stroke-linecap="round"/><line x1="13" y1="29" x2="25" y2="29" stroke="#d1d5db" stroke-width="2" stroke-linecap="round"/></svg>
+      </div>
+      <h3>Add your feedback on the left</h3>
+      <p>Mix and match sources — paste feedback, add a call transcript, or drop in a screenshot. Then click Analyze.</p>
     </div>
 
-    <!-- Loading -->
     <div class="card loading-box hidden" id="loading-state">
       <div class="spinner"></div>
       <p>Reading through your feedback…</p>
       <div class="loading-step" id="loading-step">Getting started</div>
     </div>
 
-    <!-- Results -->
     <div id="results" class="hidden">
+      <div class="stats-row" id="stats-row"></div>
 
-      <!-- Stats -->
-      <div class="stats-grid" id="stats-row"></div>
-
-      <!-- Tabs -->
-      <div class="card" style="margin-top:0">
-        <div class="tabs" style="margin-bottom:1.25rem">
-          <button class="tab active" onclick="switchTab('themes')">What came up</button>
-          <button class="tab" onclick="switchTab('asks')">Top requests</button>
-          <button class="tab" onclick="switchTab('quotes')">In their words</button>
-          <button class="tab" onclick="switchTab('nextsteps')">What to do next</button>
+      <div class="results-card" style="margin-top:1rem">
+        <div class="results-card-header">
+          <div class="tabs">
+            <button class="tab active" onclick="switchTab('themes')">What came up</button>
+            <button class="tab" onclick="switchTab('asks')">Top requests</button>
+            <button class="tab" onclick="switchTab('quotes')">In their words</button>
+            <button class="tab" onclick="switchTab('nextsteps')">What to do next</button>
+          </div>
+          <button class="btn btn-download" onclick="downloadCSV()">
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M6.5 1v8M3.5 6.5l3 3 3-3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><line x1="1" y1="11.5" x2="12" y2="11.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            Download
+          </button>
         </div>
-
         <div id="tab-themes" class="tab-panel active"></div>
         <div id="tab-asks" class="tab-panel"></div>
         <div id="tab-quotes" class="tab-panel"></div>
@@ -591,614 +690,429 @@
 </div>
 
 <script>
-// ─── State ───────────────────────────────────────────────────────────────────
+// ─── SVG icons for inline use ─────────────────────────────────────────────────
+const ICONS = {
+  positive: `<svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M2 5.5l2.5 2.5 4.5-5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+  negative: `<svg width="11" height="11" viewBox="0 0 11 11" fill="none"><line x1="2.5" y1="2.5" x2="8.5" y2="8.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><line x1="8.5" y1="2.5" x2="2.5" y2="8.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>`,
+  mixed: `<svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M1 5.5q1.25-2.5 2.5 0t2.5 0 2.5 0" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" fill="none"/></svg>`,
+  neutral: `<svg width="11" height="11" viewBox="0 0 11 11" fill="none"><line x1="2" y1="5.5" x2="9" y2="5.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>`,
+  warning: `<svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M5.5 1.5L10 9.5H1L5.5 1.5Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><line x1="5.5" y1="5" x2="5.5" y2="7" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>`,
+  check: `<svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M1.5 5.5l2.5 2.5 5.5-5.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+  diamond: `<svg width="11" height="11" viewBox="0 0 11 11" fill="none"><rect x="2.8" y="2.8" width="5.4" height="5.4" rx="0.8" transform="rotate(45 5.5 5.5)" stroke="currentColor" stroke-width="1.4"/></svg>`,
+  flame: `<svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M5.5 1c0 2-2 2-2 4a2 2 0 0 0 4 0c0-1-1-1.5-1-2.5C7.5 3.5 8 5 8 6a2.5 2.5 0 0 1-5 0c0-2 1-3 2.5-5z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>`,
+  wrench: `<svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M8.5 1.5a3 3 0 0 0-3 3c0 .4.07.77.2 1.1L1.5 9.8a.7.7 0 0 0 1 1l4.2-4.2c.33.13.7.2 1.1.2a3 3 0 0 0 0-6z" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>`,
+  phone: `<svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 2h3l1.5 3-2 1.5a8 8 0 0 0 3 3L9 7.5l3 1.5v3a1 1 0 0 1-1 1A11 11 0 0 1 1 3a1 1 0 0 1 1-1z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>`,
+  building: `<svg width="13" height="13" viewBox="0 0 13 13" fill="none"><rect x="1.5" y="1.5" width="10" height="10" rx="1.5" stroke="currentColor" stroke-width="1.3"/><line x1="4" y1="5" x2="5.5" y2="5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><line x1="7.5" y1="5" x2="9" y2="5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><line x1="4" y1="7.5" x2="5.5" y2="7.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><line x1="7.5" y1="7.5" x2="9" y2="7.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><rect x="4.75" y="9.5" width="3.5" height="2" rx="0.5" stroke="currentColor" stroke-width="1.2"/></svg>`,
+};
 
-let inputCards = [];
-let nextId = 0;
+// ─── State ────────────────────────────────────────────────────────────────────
+let inputCards = [], nextId = 0, lastAnalysis = null;
 
-const SOURCE_OPTIONS = [
-  { value: 'feedback',    label: 'Pasted feedback',      icon: '📝', isTranscript: false },
-  { value: 'fathom',      label: 'Fathom transcript',    icon: '🎙', isTranscript: true  },
-  { value: 'fireflies',   label: 'Fireflies transcript', icon: '🎙', isTranscript: true  },
-  { value: 'otter',       label: 'Otter transcript',     icon: '🎙', isTranscript: true  },
-  { value: 'gong',        label: 'Gong transcript',      icon: '🎙', isTranscript: true  },
-  { value: 'transcript',  label: 'Other transcript',     icon: '🎙', isTranscript: true  },
-  { value: 'image',       label: 'Screenshot / photo',   icon: '🖼',  isTranscript: false },
-];
+const SOURCE_META = {
+  feedback:   { label: 'Pasted feedback',      isTranscript: false },
+  fathom:     { label: 'Fathom transcript',    isTranscript: true  },
+  fireflies:  { label: 'Fireflies transcript', isTranscript: true  },
+  otter:      { label: 'Otter transcript',     isTranscript: true  },
+  gong:       { label: 'Gong transcript',      isTranscript: true  },
+  transcript: { label: 'Call transcript',      isTranscript: true  },
+  image:      { label: 'Screenshot',           isTranscript: false },
+};
 
 const PLACEHOLDERS = {
-  feedback:   'Paste feedback here — support emails, NPS responses, survey answers, app reviews. One piece of feedback per line works best.',
+  feedback:   'Paste feedback here — support emails, NPS responses, survey answers, app reviews. One item per line works best.',
   fathom:     'Paste your Fathom transcript. Speaker labels and timestamps are handled automatically.',
-  fireflies:  'Paste your Fireflies transcript. The full text including speaker names is fine.',
-  otter:      'Paste your Otter transcript. Any export format works.',
+  fireflies:  'Paste your Fireflies transcript. Any export format works.',
+  otter:      'Paste your Otter transcript.',
   gong:       'Paste your Gong call transcript.',
   transcript: 'Paste any call or meeting transcript — Zoom, Teams, Google Meet, or plain text.',
 };
 
 // ─── Examples ────────────────────────────────────────────────────────────────
-
 const EXAMPLES = {
-  saas: {
-    source: 'feedback',
-    text: `The dashboard takes forever to load when we have more than 500 records. Makes it unusable for our team during morning standups.
+  saas: { source: 'feedback', text: `The dashboard takes forever to load when we have more than 500 records. Makes it unusable during morning standups.
 Love the new kanban view! Finally something our whole team can use without training.
 Integrations with Salesforce are broken again. This is the 3rd time this month. We're considering switching.
 Why can't I export to CSV? This feels like table stakes for a tool like this.
 Onboarding was smooth but I got totally lost after day 3. No one reached out.
-The mobile app crashes every time I try to upload a file. iPhone 14, latest iOS.
-Your support team responded in 10 minutes on a Sunday. That's insane (in a good way). Renewing for sure.
+Your support team responded in 10 minutes on a Sunday. Renewing for sure.
 The pricing jumped 40% with no warning. We're a 5-person startup. This hurt.
-Would love Slack notifications when a task is overdue. Currently we miss things constantly.
-The AI suggestions are surprisingly good. Saved me 2 hours this week alone.
+Would love Slack notifications when a task is overdue. We miss things constantly.
+The AI suggestions are surprisingly good. Saved me 2 hours this week.
 Bulk actions are missing. I have to update statuses one by one which is painful.
-We've been asking for a proper audit log for 8 months. Any update?
-Setup took under 30 minutes. Compared to our last tool (Jira) this is night and day.
+We've been asking for an audit log for 8 months. Any update?
+Setup took under 30 minutes. Compared to Jira this is night and day.
 Really needs dark mode. Working late and the white UI is brutal.
-The search doesn't find anything unless you spell it perfectly. No fuzzy search?
-Our team lead wants granular permission controls. Right now it's all-or-nothing.
-Would pay more if there was a better mobile experience. Right now it's an afterthought.
-Can't figure out how to set recurring tasks. Spent 20 min looking for it.`
-  },
-  coldchain: {
-    source: 'feedback',
-    text: `Temperature alerts fire 10-15 minutes after the actual excursion. By then it's too late for perishables.
-The sensor battery life is way better than the last vendor we used. 6 months without a swap.
+No fuzzy search — it doesn't find anything unless you spell it perfectly.
+Our team lead wants granular permission controls. Right now it's all-or-nothing.` },
+  coldchain: { source: 'feedback', text: `Temperature alerts fire 10-15 minutes after the actual excursion. By then it's too late for perishables.
+The sensor battery life is way better than our last vendor. 6 months without a swap.
 We failed an FDA audit because the reports didn't include GPS coordinates. Need that ASAP.
 Calibration reminders are a lifesaver. Used to miss these constantly.
 The API docs are incomplete. We've been trying to integrate with our WMS for 3 weeks.
-Dashboard is clean but we need multi-site view. Managing 8 facilities means lots of tab switching.
-Alert fatigue is a real problem. We get 200+ alerts a day and 90% are false positives.
-Would love if the system could auto-generate excursion reports in the format our QA team needs.
-We had a cold room failure at 2am and the escalation to our on-call worked perfectly.
-The predictive maintenance feature is interesting but the false positive rate is too high to trust.
-Our compliance team needs 21 CFR Part 11 compliant audit trails. Is this on the roadmap?
-Sensor setup takes too long. 45 minutes per device is not scalable for a 500-sensor deployment.
-We love that it works offline. Our cold storage has terrible cell coverage.
-The European data residency option would unblock two of our enterprise prospects.
-Custom alert thresholds per product type would be huge for us — pharma and food have different tolerances.
-Integration with our ERP (SAP) is critical but we're told it's 12 months out. That's too long.
-The anomaly detection caught a slow refrigerant leak before it became a full failure. ROI proven.`
-  },
-  transcript: {
-    source: 'fathom',
-    speaker: 'Sarah',
-    text: `[00:00:45] Sarah (Customer): So the main issue we keep running into is the alert volume. Our team is getting hundreds of notifications a day and most of them are noise. People have started ignoring them, which kind of defeats the purpose.
-
-[00:01:18] Sarah (Customer): Yeah, ideally we could set different thresholds per product type. Pharma has completely different tolerances than our food side. Right now it's one setting for everything.
-
-[00:02:05] Sarah (Customer): Also — and this comes up every quarter — our QA team needs the excursion reports in a specific format for our auditors. We've been manually reformatting exports for 18 months. It's a whole thing.
-
-[00:03:41] Sarah (Customer): Honestly the data residency question is the blocker for our EU expansion. Our legal team won't sign off without EU data hosting. We're getting pressure to make a decision by Q3.
-
-[00:04:50] Sarah (Customer): The core product is great, by the way. The offline mode saved us during a connectivity outage last month. That's genuinely differentiated — our last vendor couldn't do that.
-
-[00:05:30] Sarah (Customer): One more thing — onboarding a new facility takes forever. Setting up 200 sensors at 45 minutes each just isn't feasible. We need a bulk provisioning workflow.`
-  }
+We need multi-site view. Managing 8 facilities means lots of tab switching.
+Alert fatigue is real. 200+ alerts a day and 90% are false positives. People ignore them now.
+Auto-generated excursion reports in our QA format would save hours every week.
+Cold room failure at 2am — the on-call escalation worked perfectly.
+21 CFR Part 11 compliant audit trails — is this on the roadmap?
+Sensor setup takes 45 minutes per device. Not scalable for a 500-sensor deployment.
+Works offline. Our cold storage has terrible cell coverage — this is a dealbreaker for us.
+EU data residency would unblock two of our enterprise prospects.
+Custom thresholds per product type would be huge — pharma and food have different tolerances.
+The anomaly detection caught a slow refrigerant leak before it became a full failure. ROI proven.` },
+  transcript: { source: 'fathom', speaker: 'Sarah', text: `[00:00:45] Sarah (Customer): The main issue is alert volume. Hundreds of notifications a day and most are noise. People started ignoring them, which defeats the purpose.
+[00:01:18] Sarah (Customer): We need different thresholds per product type. Pharma has completely different tolerances than our food side. Right now it's one setting for everything.
+[00:02:05] Sarah (Customer): Our QA team needs excursion reports in a specific format for auditors. We've been manually reformatting exports for 18 months.
+[00:03:41] Sarah (Customer): Data residency is the blocker for EU expansion. Legal won't sign off without EU data hosting. We need to decide by Q3.
+[00:04:50] Sarah (Customer): The core product is great. Offline mode saved us during a connectivity outage — our last vendor couldn't do that.
+[00:05:30] Sarah (Customer): Onboarding a new facility takes forever. 200 sensors at 45 minutes each isn't feasible. We need bulk provisioning.` }
 };
 
 function loadExample(type) {
-  // Clear existing inputs
-  inputCards = [];
-  nextId = 0;
+  inputCards = []; nextId = 0;
   document.getElementById('inputs-list').innerHTML = '';
-
+  document.getElementById('source-picker').classList.add('hidden');
   if (type === 'saas') {
-    addInput(EXAMPLES.saas.source, EXAMPLES.saas.text);
+    addInput('feedback', EXAMPLES.saas.text);
     document.getElementById('context').value = 'Project management software for small and mid-size businesses';
   } else if (type === 'coldchain') {
-    addInput(EXAMPLES.coldchain.source, EXAMPLES.coldchain.text);
+    addInput('feedback', EXAMPLES.coldchain.text);
     document.getElementById('context').value = 'Temperature monitoring software for food and pharmaceutical companies';
-  } else if (type === 'mixed') {
-    addInput(EXAMPLES.coldchain.source, EXAMPLES.coldchain.text);
-    addInput(EXAMPLES.transcript.source, EXAMPLES.transcript.text, EXAMPLES.transcript.speaker);
+  } else {
+    addInput('feedback', EXAMPLES.coldchain.text);
+    addInput('fathom', EXAMPLES.transcript.text, EXAMPLES.transcript.speaker);
     document.getElementById('context').value = 'Temperature monitoring software for food and pharmaceutical companies';
   }
 }
 
-// ─── Input card management ────────────────────────────────────────────────────
+// ─── Add source ───────────────────────────────────────────────────────────────
+function showAddSource() {
+  document.getElementById('source-picker').classList.toggle('hidden');
+}
 
-function addInput(sourceValue = 'feedback', initialText = '', initialSpeaker = '') {
+function addInput(sourceType = 'feedback', initialText = '', initialSpeaker = '') {
+  document.getElementById('source-picker').classList.add('hidden');
   const id = nextId++;
-  inputCards.push({ id, source: sourceValue, imageData: null });
+  inputCards.push({ id, source: sourceType, imageData: null });
+  const meta = SOURCE_META[sourceType];
+  const isImage = sourceType === 'image';
+  const placeholder = PLACEHOLDERS[sourceType] || PLACEHOLDERS.transcript;
 
   const wrap = document.createElement('div');
   wrap.className = 'input-card';
   wrap.id = `card-${id}`;
 
-  const optionsHTML = SOURCE_OPTIONS.map(o =>
-    `<option value="${o.value}" ${o.value === sourceValue ? 'selected' : ''}>${o.icon} ${o.label}</option>`
-  ).join('');
-
-  const isImage = sourceValue === 'image';
-  const isTranscript = SOURCE_OPTIONS.find(o => o.value === sourceValue)?.isTranscript;
+  const micIcon = `<svg width="12" height="12" viewBox="0 0 12 12" fill="none"><rect x="4" y="1" width="4" height="7" rx="2" stroke="currentColor" stroke-width="1.3"/><path d="M2 6a4 4 0 0 0 8 0" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><line x1="6" y1="10" x2="6" y2="12" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>`;
+  const docIcon = `<svg width="12" height="12" viewBox="0 0 12 12" fill="none"><rect x="1.5" y="1" width="9" height="10" rx="1.5" stroke="currentColor" stroke-width="1.3"/><line x1="3.5" y1="4.5" x2="8.5" y2="4.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><line x1="3.5" y1="6.5" x2="8.5" y2="6.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><line x1="3.5" y1="8.5" x2="6.5" y2="8.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>`;
+  const imgIcon = `<svg width="12" height="12" viewBox="0 0 12 12" fill="none"><rect x="1" y="2" width="10" height="8" rx="1.5" stroke="currentColor" stroke-width="1.3"/><circle cx="4" cy="5.5" r="1" stroke="currentColor" stroke-width="1.1"/><path d="M1 9l3-3 2 2 2-2 3 3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+  const icon = meta.isTranscript ? micIcon : (isImage ? imgIcon : docIcon);
 
   wrap.innerHTML = `
     <div class="input-card-header">
-      <select class="source-select" onchange="changeSource(${id}, this.value)">
-        ${optionsHTML}
-      </select>
-      <button class="btn-icon" onclick="removeInput(${id})" title="Remove">×</button>
+      <div class="input-card-source">${icon} ${meta.label}</div>
+      <button class="btn-icon" onclick="removeInput(${id})">
+        <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><line x1="2" y1="2" x2="11" y2="11" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><line x1="11" y1="2" x2="2" y2="11" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      </button>
     </div>
     <div class="input-card-body" id="body-${id}">
-      ${isImage ? imageZoneHTML(id) : textAreaHTML(id, sourceValue, initialText, isTranscript, initialSpeaker)}
+      ${isImage ? dropZoneHTML(id) : textAreaHTML(id, placeholder, initialText, meta.isTranscript, initialSpeaker)}
     </div>
-    <div class="input-card-footer" id="footer-${id}">
-      <span id="count-${id}">${isImage ? '' : countLabel(initialText, sourceValue)}</span>
-      ${isTranscript && !isImage ? `<span style="color:var(--accent-light);font-size:0.7rem">Timestamps & speaker labels handled automatically</span>` : ''}
+    <div class="input-card-footer">
+      <span id="count-${id}">${isImage ? '' : countText(initialText, sourceType)}</span>
+      ${meta.isTranscript ? '<span>Timestamps &amp; speaker labels handled automatically</span>' : ''}
     </div>
   `;
-
   document.getElementById('inputs-list').appendChild(wrap);
   updateTotals();
 }
 
-function textAreaHTML(id, source, text, isTranscript, speaker) {
-  const placeholder = PLACEHOLDERS[source] || PLACEHOLDERS.transcript;
-  return `
-    <textarea id="ta-${id}" placeholder="${placeholder}" oninput="onTextInput(${id})">${escHtml(text)}</textarea>
-    ${isTranscript ? `
-      <div class="speaker-field">
-        <label for="speaker-${id}">Customer's name in transcript (optional):</label>
-        <input type="text" id="speaker-${id}" value="${escHtml(speaker)}" placeholder="e.g. Sarah, Customer" />
-      </div>` : ''}
-  `;
+function textAreaHTML(id, placeholder, text, isTranscript, speaker) {
+  return `<textarea id="ta-${id}" placeholder="${placeholder}" oninput="onInput(${id})">${escHtml(text)}</textarea>
+    ${isTranscript ? `<div class="speaker-row"><label for="sp-${id}">Customer's name in transcript (optional):</label><input type="text" id="sp-${id}" value="${escHtml(speaker)}" placeholder="e.g. Sarah, Customer" /></div>` : ''}`;
 }
 
-function imageZoneHTML(id) {
-  return `
-    <div class="image-drop-zone" id="drop-${id}"
-         ondragover="event.preventDefault();this.classList.add('drag-over')"
-         ondragleave="this.classList.remove('drag-over')"
-         ondrop="handleDrop(event,${id})">
-      <input type="file" accept="image/*" onchange="handleFile(event,${id})" />
-      <div class="drop-icon">🖼</div>
-      <p>Drop a screenshot here, or click to choose a file</p>
-      <div class="drop-hint">Works with screenshots of reviews, surveys, Slack messages, emails, and more</div>
-    </div>
-    <div id="preview-${id}" style="margin-top:0.5rem;display:none"></div>
-  `;
+function dropZoneHTML(id) {
+  return `<div class="drop-zone" id="dz-${id}" ondragover="event.preventDefault();this.classList.add('over')" ondragleave="this.classList.remove('over')" ondrop="handleDrop(event,${id})">
+    <input type="file" accept="image/*" onchange="handleFile(event,${id})" />
+    <div class="dz-icon"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="3" y="4" width="22" height="20" rx="3" stroke="#9ca3af" stroke-width="1.75"/><circle cx="9" cy="10.5" r="2" stroke="#9ca3af" stroke-width="1.5"/><path d="M3 20l6-6 4 4 4-5 5 7" stroke="#9ca3af" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <p>Drop a screenshot here or click to browse</p>
+    <small>Works with reviews, surveys, Slack messages, emails, and more</small>
+  </div>
+  <div id="prev-${id}" style="display:none"></div>`;
 }
 
-function escHtml(str) {
-  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
+function escHtml(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function countText(t, s) { const n=t.split('\n').filter(l=>l.trim()).length; if(!n)return''; return s==='feedback'?`${n} ${n===1?'entry':'entries'}`:`${n} lines`; }
 
-function countLabel(text, source) {
-  const lines = text.split('\n').filter(l => l.trim()).length;
-  if (!lines) return '';
-  if (source === 'feedback') return `${lines} ${lines === 1 ? 'entry' : 'entries'}`;
-  return `${lines} lines`;
-}
-
-function onTextInput(id) {
-  const ta = document.getElementById(`ta-${id}`);
-  const card = inputCards.find(c => c.id === id);
-  if (ta && card) {
-    const el = document.getElementById(`count-${id}`);
-    if (el) el.textContent = countLabel(ta.value, card.source);
-  }
-  updateTotals();
-}
-
-function changeSource(id, newSource) {
-  const card = inputCards.find(c => c.id === id);
-  if (!card) return;
-  card.source = newSource;
-  card.imageData = null;
-
-  const isImage = newSource === 'image';
-  const isTranscript = SOURCE_OPTIONS.find(o => o.value === newSource)?.isTranscript;
-  const body = document.getElementById(`body-${id}`);
-  const footer = document.getElementById(`footer-${id}`);
-
-  body.innerHTML = isImage ? imageZoneHTML(id) : textAreaHTML(id, newSource, '', isTranscript, '');
-  footer.innerHTML = `
-    <span id="count-${id}"></span>
-    ${isTranscript && !isImage ? `<span style="color:var(--accent-light);font-size:0.7rem">Timestamps & speaker labels handled automatically</span>` : ''}
-  `;
+function onInput(id) {
+  const ta=document.getElementById(`ta-${id}`), card=inputCards.find(c=>c.id===id);
+  if(ta&&card){ const el=document.getElementById(`count-${id}`); if(el) el.textContent=countText(ta.value,card.source); }
   updateTotals();
 }
 
 function removeInput(id) {
-  inputCards = inputCards.filter(c => c.id !== id);
-  const el = document.getElementById(`card-${id}`);
-  if (el) el.remove();
+  inputCards=inputCards.filter(c=>c.id!==id);
+  document.getElementById(`card-${id}`)?.remove();
   updateTotals();
 }
 
 function updateTotals() {
-  const bar = document.getElementById('totals-bar');
-  const summary = document.getElementById('total-summary');
-
-  let textCount = 0, transcriptCount = 0, imageCount = 0;
-  inputCards.forEach(card => {
-    if (card.source === 'image') {
-      if (card.imageData) imageCount++;
-    } else {
-      const ta = document.getElementById(`ta-${card.id}`);
-      const lines = ta ? ta.value.split('\n').filter(l => l.trim()).length : 0;
-      if (SOURCE_OPTIONS.find(o => o.value === card.source)?.isTranscript) {
-        if (lines) transcriptCount++;
-      } else {
-        textCount += lines;
-      }
-    }
+  const pill=document.getElementById('totals-pill');
+  let text=0,trans=0,imgs=0;
+  inputCards.forEach(c=>{
+    if(c.source==='image'){if(c.imageData)imgs++;return;}
+    const ta=document.getElementById(`ta-${c.id}`);
+    const lines=ta?ta.value.split('\n').filter(l=>l.trim()).length:0;
+    SOURCE_META[c.source]?.isTranscript?(lines&&trans++):(text+=lines);
   });
-
-  const parts = [];
-  if (textCount) parts.push(`<span>${textCount}</span> feedback entries`);
-  if (transcriptCount) parts.push(`<span>${transcriptCount}</span> transcript${transcriptCount > 1 ? 's' : ''}`);
-  if (imageCount) parts.push(`<span>${imageCount}</span> screenshot${imageCount > 1 ? 's' : ''}`);
-
-  if (parts.length) {
-    bar.style.display = 'flex';
-    summary.innerHTML = parts.join(' · ');
-  } else {
-    bar.style.display = 'none';
-  }
+  const parts=[];
+  if(text) parts.push(`<strong>${text}</strong> entries`);
+  if(trans) parts.push(`<strong>${trans}</strong> transcript${trans>1?'s':''}`);
+  if(imgs) parts.push(`<strong>${imgs}</strong> screenshot${imgs>1?'s':''}`);
+  if(parts.length){ pill.style.display='flex'; pill.innerHTML=parts.join(' · '); }
+  else pill.style.display='none';
 }
 
-// ─── Image handling ───────────────────────────────────────────────────────────
-
-function handleFile(event, id) {
-  const file = event.target.files[0];
-  if (file) readImageFile(file, id);
-}
-
-function handleDrop(event, id) {
-  event.preventDefault();
-  document.getElementById(`drop-${id}`)?.classList.remove('drag-over');
-  const file = event.dataTransfer.files[0];
-  if (file && file.type.startsWith('image/')) readImageFile(file, id);
-}
-
-function readImageFile(file, id) {
-  const reader = new FileReader();
-  reader.onload = e => {
-    const dataUrl = e.target.result;
-    const card = inputCards.find(c => c.id === id);
-    if (card) card.imageData = dataUrl;
-
-    const preview = document.getElementById(`preview-${id}`);
-    const drop = document.getElementById(`drop-${id}`);
-    if (preview) {
-      preview.style.display = 'block';
-      preview.innerHTML = `
-        <div class="image-preview-wrap">
-          <img src="${dataUrl}" alt="Screenshot preview" />
-          <button class="clear-img" onclick="clearImage(${id})" title="Remove image">×</button>
-        </div>`;
-    }
-    if (drop) drop.style.display = 'none';
-
-    const count = document.getElementById(`count-${id}`);
-    if (count) count.textContent = '1 image';
+// ─── Images ───────────────────────────────────────────────────────────────────
+function handleFile(e,id){const f=e.target.files[0];if(f)readImg(f,id);}
+function handleDrop(e,id){e.preventDefault();document.getElementById(`dz-${id}`)?.classList.remove('over');const f=e.dataTransfer.files[0];if(f?.type.startsWith('image/'))readImg(f,id);}
+function readImg(file,id){
+  const r=new FileReader();
+  r.onload=e=>{
+    const url=e.target.result, card=inputCards.find(c=>c.id===id);
+    if(card) card.imageData=url;
+    const dz=document.getElementById(`dz-${id}`), prev=document.getElementById(`prev-${id}`);
+    if(dz) dz.style.display='none';
+    if(prev){prev.style.display='block';prev.innerHTML=`<div class="img-preview"><img src="${url}" /><button class="img-clear" onclick="clearImg(${id})">✕</button></div>`;}
+    const cnt=document.getElementById(`count-${id}`);if(cnt)cnt.textContent='1 image';
     updateTotals();
   };
-  reader.readAsDataURL(file);
+  r.readAsDataURL(file);
 }
-
-function clearImage(id) {
-  const card = inputCards.find(c => c.id === id);
-  if (card) card.imageData = null;
-  const preview = document.getElementById(`preview-${id}`);
-  const drop = document.getElementById(`drop-${id}`);
-  if (preview) { preview.style.display = 'none'; preview.innerHTML = ''; }
-  if (drop) drop.style.display = 'block';
-  const count = document.getElementById(`count-${id}`);
-  if (count) count.textContent = '';
+function clearImg(id){
+  const card=inputCards.find(c=>c.id===id);if(card)card.imageData=null;
+  const dz=document.getElementById(`dz-${id}`),prev=document.getElementById(`prev-${id}`);
+  if(dz)dz.style.display='block';if(prev){prev.style.display='none';prev.innerHTML='';}
+  const cnt=document.getElementById(`count-${id}`);if(cnt)cnt.textContent='';
   updateTotals();
 }
 
-// ─── Analysis ────────────────────────────────────────────────────────────────
+// ─── Analyze ──────────────────────────────────────────────────────────────────
+function showError(m){const b=document.getElementById('error-box');b.textContent=m;b.classList.remove('hidden');}
+function clearError(){document.getElementById('error-box').classList.add('hidden');}
+function setStep(m){document.getElementById('loading-step').textContent=m;}
 
-function showError(msg) {
-  const box = document.getElementById('error-box');
-  box.textContent = msg;
-  box.classList.remove('hidden');
-}
-
-function clearError() {
-  document.getElementById('error-box').classList.add('hidden');
-}
-
-function setStep(msg) {
-  document.getElementById('loading-step').textContent = msg;
-}
-
-async function analyze() {
+async function analyze(){
   clearError();
-  const context = document.getElementById('context').value.trim();
-  const focus = document.getElementById('analysis-type').value;
-
-  if (!inputCards.length) return showError('Please add at least one feedback source.');
-
-  // Validate something has content
-  let hasContent = false;
-  inputCards.forEach(card => {
-    if (card.source === 'image' && card.imageData) hasContent = true;
-    const ta = document.getElementById(`ta-${card.id}`);
-    if (ta && ta.value.trim()) hasContent = true;
+  const context=document.getElementById('context').value.trim();
+  const focus=document.getElementById('analysis-type').value;
+  if(!inputCards.length) return showError('Please add at least one feedback source.');
+  let hasContent=false;
+  inputCards.forEach(c=>{
+    if(c.source==='image'&&c.imageData) hasContent=true;
+    const ta=document.getElementById(`ta-${c.id}`);
+    if(ta?.value.trim()) hasContent=true;
   });
-  if (!hasContent) return showError('Please paste some feedback or add a screenshot before analyzing.');
+  if(!hasContent) return showError('Please paste some feedback or add a screenshot first.');
 
   document.getElementById('empty-state').classList.add('hidden');
   document.getElementById('results').classList.add('hidden');
   document.getElementById('loading-state').classList.remove('hidden');
-  document.getElementById('analyze-btn').disabled = true;
+  document.getElementById('analyze-btn').disabled=true;
 
-  const focusInstructions = {
-    balanced:  'Give a balanced overview covering all themes, feelings, and requests.',
-    churn:     'Focus on complaints, frustrations, and any signs that customers might leave.',
-    growth:    'Focus on what customers love, why they stay, and opportunities to expand.',
-    roadmap:   'Focus on what customers are asking for and rank those requests by how often they come up.'
+  const focusMap={
+    balanced:'Give a balanced overview covering all themes, feelings, and requests.',
+    churn:'Focus on complaints, frustrations, and signs that customers might leave.',
+    growth:'Focus on what customers love, why they stay, and expansion opportunities.',
+    roadmap:'Focus on what customers are asking for and rank those requests by demand.'
   };
 
-  const systemPrompt = `You are helping a business team understand what their customers are saying. Your job is to turn raw feedback — from support emails, call transcripts, surveys, screenshots, and reviews — into clear, plain-language insights that anyone on the team can understand and act on.
+  const systemPrompt=`You are helping a business team understand what their customers are saying. Turn raw feedback into clear, plain-language insights anyone on the team can act on.
+${context?`\nThe product is: ${context}.`:''}
+${focusMap[focus]}
 
-${context ? `The product is: ${context}.` : ''}
-${focusInstructions[focus]}
-
-Write everything in plain English — no jargon. Imagine you're briefing a cross-functional team that includes people who build the product, people who talk to customers every day, and leadership.
-
-Respond ONLY with raw valid JSON — no markdown, no code fences, no explanation before or after. Start your response with { and end with }. Use this exact structure:
+Write in plain English — no jargon. Respond ONLY with raw valid JSON — no markdown, no code fences. Start with { and end with }:
 {
-  "summary": {
-    "total_entries": number,
-    "sentiment": { "positive": number, "neutral": number, "negative": number },
-    "headline": "One plain-English sentence summing up what customers are feeling right now"
-  },
-  "themes": [
-    {
-      "name": "Short, plain-English theme title",
-      "count": number,
-      "sentiment": "positive|negative|mixed|neutral",
-      "summary": "2-3 sentences explaining what customers said about this and why it matters to the business. No jargon.",
-      "representative_quotes": ["direct quote 1", "direct quote 2"]
-    }
-  ],
-  "top_requests": [
-    {
-      "request": "Plain description of what customers are asking for",
-      "priority": "high|medium|low",
-      "frequency": number,
-      "why_it_matters": "1-2 sentences on the customer impact and business case in plain language"
-    }
-  ],
-  "key_quotes": [
-    {
-      "quote": "Verbatim or near-verbatim from the customer",
-      "theme": "Which theme this belongs to",
-      "type": "pain|delight|request|churn-risk"
-    }
-  ],
-  "next_steps": {
-    "product_team": "3-4 sentences. Specific, plain-language recommendations for the people who build and improve the product. What to fix, build, or investigate — and in what order.",
-    "account_managers": "3-4 sentences. Specific actions for the people who own customer relationships. Which customers to call, what to say, what to watch out for.",
-    "other_teams": "2-3 sentences. What support, marketing, or leadership should know or do based on this feedback."
-  }
+  "summary":{"total_entries":number,"sentiment":{"positive":number,"neutral":number,"negative":number},"headline":"One plain-English sentence summing up customer sentiment"},
+  "themes":[{"name":"Short theme title","count":number,"sentiment":"positive|negative|mixed|neutral","summary":"2-3 sentences on what customers said and why it matters","representative_quotes":["q1","q2"]}],
+  "top_requests":[{"request":"Plain description","priority":"high|medium|low","frequency":number,"why_it_matters":"1-2 sentences on impact and business case"}],
+  "key_quotes":[{"quote":"Verbatim from customer","theme":"Which theme","type":"pain|delight|request|churn-risk"}],
+  "next_steps":{"product_team":"3-4 sentences on what to fix/build/investigate and in what order.","account_managers":"3-4 sentences on which customers to contact and what to say.","other_teams":"2-3 sentences for support, marketing, or leadership."}
 }
+Return 3-6 themes, 3-5 top requests, 4-6 key quotes.`;
 
-Return 3-6 themes, 3-5 top requests, and 4-6 key quotes.`;
-
-  // Build content array for user message
-  const contentParts = [];
-
-  // Collect text inputs
-  const textSections = [];
-  inputCards.forEach(card => {
-    if (card.source === 'image') return;
-    const ta = document.getElementById(`ta-${card.id}`);
-    if (!ta || !ta.value.trim()) return;
-    const sourceMeta = SOURCE_OPTIONS.find(o => o.value === card.source);
-    const speakerEl = document.getElementById(`speaker-${card.id}`);
-    const speaker = speakerEl ? speakerEl.value.trim() : '';
-
-    if (sourceMeta?.isTranscript) {
-      const toolName = { fathom:'Fathom', fireflies:'Fireflies', otter:'Otter', gong:'Gong', transcript:'a call recording tool' }[card.source] || 'a call recording tool';
-      textSections.push(`--- ${toolName.toUpperCase()} TRANSCRIPT${speaker ? ` (customer: ${speaker})` : ''} ---\n${ta.value.trim()}`);
+  const contentParts=[], textSections=[];
+  inputCards.forEach(c=>{
+    if(c.source==='image') return;
+    const ta=document.getElementById(`ta-${c.id}`);
+    if(!ta?.value.trim()) return;
+    const meta=SOURCE_META[c.source], speaker=document.getElementById(`sp-${c.id}`)?.value.trim()||'';
+    if(meta.isTranscript){
+      const tool={fathom:'Fathom',fireflies:'Fireflies',otter:'Otter',gong:'Gong'}[c.source]||'Call recording';
+      textSections.push(`--- ${tool.toUpperCase()} TRANSCRIPT${speaker?` (customer: ${speaker})`:''}---\n${ta.value.trim()}`);
     } else {
       textSections.push(`--- CUSTOMER FEEDBACK ENTRIES ---\n${ta.value.trim()}`);
     }
   });
-
-  if (textSections.length) {
-    contentParts.push({ type: 'text', text: `Please analyze the following customer feedback:\n\n${textSections.join('\n\n')}` });
-  }
-
-  // Add images
-  inputCards.forEach(card => {
-    if (card.source === 'image' && card.imageData) {
-      if (!contentParts.length) {
-        contentParts.push({ type: 'text', text: 'Please analyze the customer feedback in these screenshots:' });
-      }
-      contentParts.push({
-        type: 'image_url',
-        image_url: { url: card.imageData, detail: 'high' }
-      });
+  if(textSections.length) contentParts.push({type:'text',text:`Analyze the following:\n\n${textSections.join('\n\n')}`});
+  inputCards.forEach(c=>{
+    if(c.source==='image'&&c.imageData){
+      if(!contentParts.length) contentParts.push({type:'text',text:'Analyze the feedback in these screenshots:'});
+      contentParts.push({type:'image_url',image_url:{url:c.imageData,detail:'high'}});
     }
   });
 
-  if (!contentParts.length) {
-    document.getElementById('loading-state').classList.add('hidden');
-    document.getElementById('empty-state').classList.remove('hidden');
-    document.getElementById('analyze-btn').disabled = false;
-    return showError('Nothing to analyze. Please add some feedback content.');
-  }
-
   try {
-    setStep('Sending to OpenAI…');
-
-    const res = await fetch('/api/analyze', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        system: systemPrompt,
-        content: contentParts
-      })
-    });
-
+    setStep('Sending to AI…');
+    const res=await fetch('/api/analyze',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({system:systemPrompt,content:contentParts})});
     setStep('Pulling out the insights…');
-
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}));
-      throw new Error(err?.error?.message || `API error ${res.status}`);
-    }
-
-    const data = await res.json();
-    const analysis = JSON.parse(data.choices[0].message.content);
-    renderResults(analysis);
-
-  } catch (e) {
+    const data=await res.json();
+    if(!res.ok) throw new Error(data.error||`API error ${res.status}`);
+    lastAnalysis=JSON.parse(data.choices[0].message.content);
+    renderResults(lastAnalysis);
+  } catch(e){
     document.getElementById('loading-state').classList.add('hidden');
     document.getElementById('empty-state').classList.remove('hidden');
     showError(`Something went wrong: ${e.message}`);
   } finally {
-    document.getElementById('analyze-btn').disabled = false;
+    document.getElementById('analyze-btn').disabled=false;
   }
 }
 
 // ─── Render ───────────────────────────────────────────────────────────────────
-
-function switchTab(name) {
-  const names = ['themes','asks','quotes','nextsteps'];
-  document.querySelectorAll('.tab').forEach((t, i) => t.classList.toggle('active', names[i] === name));
-  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+function switchTab(name){
+  const names=['themes','asks','quotes','nextsteps'];
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',names[i]===name));
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
   document.getElementById(`tab-${name}`).classList.add('active');
 }
 
-function renderResults(d) {
+function renderResults(d){
   document.getElementById('loading-state').classList.add('hidden');
   document.getElementById('results').classList.remove('hidden');
   renderStats(d.summary);
   renderThemes(d.themes);
-  renderAsks(d.top_requests);
+  renderRequests(d.top_requests);
   renderQuotes(d.key_quotes);
   renderNextSteps(d.next_steps);
 }
 
-function renderStats(s) {
-  const total = s.sentiment.positive + s.sentiment.neutral + s.sentiment.negative;
-  const pct = v => total ? Math.round(v / total * 100) : 0;
-  const pos = pct(s.sentiment.positive);
-  const neu = pct(s.sentiment.neutral);
-  const neg = pct(s.sentiment.negative);
-
-  document.getElementById('stats-row').innerHTML = `
+function renderStats(s){
+  const total=s.sentiment.positive+s.sentiment.neutral+s.sentiment.negative||1;
+  const pct=v=>Math.round(v/total*100);
+  const pos=pct(s.sentiment.positive),neu=pct(s.sentiment.neutral),neg=pct(s.sentiment.negative);
+  document.getElementById('stats-row').innerHTML=`
     <div class="stat-card">
-      <div class="stat-label">Pieces of feedback</div>
-      <div class="stat-value" style="color:var(--accent-light)">${s.total_entries}</div>
-      <div class="stat-sub">analyzed across all sources</div>
+      <div class="stat-label">Analyzed</div>
+      <div class="stat-value">${s.total_entries}</div>
+      <div class="stat-sub">pieces of feedback</div>
     </div>
     <div class="stat-card">
       <div class="stat-label">Overall feeling</div>
-      <div style="display:flex;gap:0.6rem;margin:0.4rem 0;font-size:0.82rem;font-weight:700">
-        <span style="color:var(--green)">😊 ${pos}%</span>
-        <span style="color:var(--text-muted)">😐 ${neu}%</span>
-        <span style="color:var(--red)">😟 ${neg}%</span>
+      <div style="display:flex;gap:0.6rem;margin:0.4rem 0 0.1rem;font-size:0.79rem;font-weight:700">
+        <span style="color:var(--green)">Positive ${pos}%</span>
+        <span style="color:var(--text-dim)">Neutral ${neu}%</span>
+        <span style="color:var(--red)">Negative ${neg}%</span>
       </div>
       <div class="sentiment-bar">
         <div class="seg" style="width:${pos}%;background:var(--green)"></div>
-        <div class="seg" style="width:${neu}%;background:var(--text-muted)"></div>
+        <div class="seg" style="width:${neu}%;background:#e5e7eb"></div>
         <div class="seg" style="width:${neg}%;background:var(--red)"></div>
       </div>
     </div>
     <div class="stat-card">
       <div class="stat-label">The short version</div>
-      <div style="font-size:0.84rem;line-height:1.5;margin-top:0.35rem;color:var(--text)">${s.headline}</div>
-    </div>
-  `;
+      <div style="font-size:0.81rem;line-height:1.55;margin-top:0.3rem;color:var(--text)">${s.headline}</div>
+    </div>`;
 }
 
-function renderThemes(themes) {
-  document.getElementById('tab-themes').innerHTML = `
-    <div class="themes-list">
-      ${themes.map(t => `
-        <div class="theme-item">
-          <div class="theme-header">
-            <span class="theme-name">${t.name}</span>
-            <span class="theme-count">${t.count} mentions</span>
-          </div>
-          <div class="theme-summary">${t.summary}</div>
-          <span class="theme-sentiment sent-${t.sentiment}">
-            ${{ positive:'😊 Positive', negative:'😟 Negative', mixed:'😬 Mixed', neutral:'😐 Neutral' }[t.sentiment] || t.sentiment}
-          </span>
-        </div>
-      `).join('')}
-    </div>
-  `;
-}
-
-function renderAsks(requests) {
-  if (!requests?.length) {
-    document.getElementById('tab-asks').innerHTML = `<p style="color:var(--text-muted);font-size:0.85rem">No specific requests found in this feedback.</p>`;
-    return;
-  }
-  document.getElementById('tab-asks').innerHTML = `
-    <div class="asks-list">
-      ${requests.map((r, i) => `
-        <div class="ask-item">
-          <div class="ask-rank">${i+1}</div>
-          <div class="ask-body">
-            <div style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;margin-bottom:0.25rem">
-              <span class="ask-name">${r.request}</span>
-              <span class="priority-badge prio-${r.priority}">${r.priority}</span>
-              <span style="font-size:0.72rem;color:var(--text-muted)">${r.frequency} ${r.frequency === 1 ? 'person' : 'people'}</span>
-            </div>
-            <div class="ask-why">${r.why_it_matters}</div>
-          </div>
-        </div>
-      `).join('')}
-    </div>
-  `;
-}
-
-function renderQuotes(quotes) {
-  const colors = { pain:'var(--red)', delight:'var(--green)', request:'var(--accent-light)', 'churn-risk':'var(--orange)' };
-  const labels = { pain:'⚠ Complaint', delight:'✓ Positive', request:'◆ Request', 'churn-risk':'🔥 At-risk' };
-  document.getElementById('tab-quotes').innerHTML = `
-    <div class="quotes-list">
-      ${quotes.map(q => `
-        <div class="quote-item" style="border-left-color:${colors[q.type] || 'var(--accent)'}">
-          <div class="quote-text">"${q.quote}"</div>
-          <div class="quote-meta">
-            <span style="color:${colors[q.type] || 'var(--accent-light)'}">${labels[q.type] || q.type}</span>
-            · ${q.theme}
-          </div>
-        </div>
-      `).join('')}
-    </div>
-  `;
-}
-
-function renderNextSteps(ns) {
-  if (!ns) {
-    document.getElementById('tab-nextsteps').innerHTML = `<p style="color:var(--text-muted);font-size:0.85rem">No recommendations available.</p>`;
-    return;
-  }
-  document.getElementById('tab-nextsteps').innerHTML = `
-    <div class="next-steps-grid">
-      <div class="team-block team-product">
-        <div class="team-block-header">🔧 Product team</div>
-        <div class="team-block-body">${ns.product_team}</div>
+function renderThemes(themes){
+  const sentimentLabels={positive:'Positive',negative:'Negative',mixed:'Mixed',neutral:'Neutral'};
+  document.getElementById('tab-themes').innerHTML=`<div class="themes-list">${
+    themes.map(t=>`<div class="theme-item">
+      <div class="theme-top"><span class="theme-name">${t.name}</span>
+        <span class="sentiment-pill s-${t.sentiment}">${ICONS[t.sentiment]||''} ${sentimentLabels[t.sentiment]||t.sentiment}</span>
       </div>
-      <div class="team-block team-account">
-        <div class="team-block-header">📞 Account managers & customer success</div>
-        <div class="team-block-body">${ns.account_managers}</div>
+      <div class="theme-summary">${t.summary}</div>
+      <div class="theme-foot"><span class="count-pill">${t.count} mentions</span></div>
+    </div>`).join('')
+  }</div>`;
+}
+
+function renderRequests(reqs){
+  if(!reqs?.length){document.getElementById('tab-asks').innerHTML=`<p style="color:var(--text-muted);font-size:0.85rem">No specific requests found.</p>`;return;}
+  document.getElementById('tab-asks').innerHTML=`<div class="requests-list">${
+    reqs.map((r,i)=>`<div class="request-item">
+      <div class="req-rank">${i+1}</div>
+      <div class="req-body">
+        <div class="req-top">
+          <span class="req-name">${r.request}</span>
+          <span class="prio prio-${r.priority}">${r.priority}</span>
+          <span class="freq-label">${r.frequency} ${r.frequency===1?'person':'people'}</span>
+        </div>
+        <div class="req-why">${r.why_it_matters}</div>
       </div>
-      <div class="team-block team-other">
-        <div class="team-block-header">🏢 Support, marketing & leadership</div>
-        <div class="team-block-body">${ns.other_teams}</div>
+    </div>`).join('')
+  }</div>`;
+}
+
+function renderQuotes(quotes){
+  const colors={pain:'var(--red)',delight:'var(--green)',request:'var(--accent)',['churn-risk']:'var(--orange)'};
+  const icons={pain:ICONS.warning,delight:ICONS.check,request:ICONS.diamond,['churn-risk']:ICONS.flame};
+  const labels={pain:'Complaint',delight:'Positive',request:'Request',['churn-risk']:'At-risk'};
+  document.getElementById('tab-quotes').innerHTML=`<div class="quotes-list">${
+    quotes.map(q=>`<div class="quote-item qt-${q.type}">
+      <div class="quote-text">"${q.quote}"</div>
+      <div class="quote-meta">
+        <span class="quote-type" style="color:${colors[q.type]||'var(--accent)'}">${icons[q.type]||''} ${labels[q.type]||q.type}</span>
+        <span>·</span><span>${q.theme}</span>
       </div>
+    </div>`).join('')
+  }</div>`;
+}
+
+function renderNextSteps(ns){
+  if(!ns) return;
+  document.getElementById('tab-nextsteps').innerHTML=`<div class="steps-grid">
+    <div class="step-block step-product">
+      <div class="step-header">${ICONS.wrench} Product team</div>
+      <div class="step-body">${ns.product_team}</div>
     </div>
-  `;
+    <div class="step-block step-account">
+      <div class="step-header">${ICONS.phone} Account managers &amp; customer success</div>
+      <div class="step-body">${ns.account_managers}</div>
+    </div>
+    <div class="step-block step-other">
+      <div class="step-header">${ICONS.building} Support, marketing &amp; leadership</div>
+      <div class="step-body">${ns.other_teams}</div>
+    </div>
+  </div>`;
+}
+
+// ─── CSV Download ─────────────────────────────────────────────────────────────
+function downloadCSV(){
+  if(!lastAnalysis) return;
+  const d=lastAnalysis, esc=v=>`"${String(v||'').replace(/"/g,'""')}"`, row=(...c)=>c.map(esc).join(',');
+  const rows=[
+    row('FEEDBACKLENS ANALYSIS',new Date().toLocaleDateString()),row(''),
+    row('SUMMARY'),row('Total feedback',d.summary.total_entries),row('Headline',d.summary.headline),
+    row('Positive',d.summary.sentiment.positive),row('Neutral',d.summary.sentiment.neutral),row('Negative',d.summary.sentiment.negative),row(''),
+    row('THEMES'),row('Theme','Mentions','Sentiment','Summary'),
+    ...d.themes.map(t=>row(t.name,t.count,t.sentiment,t.summary)),row(''),
+    row('TOP REQUESTS'),row('Request','Priority','People asking','Why it matters'),
+    ...(d.top_requests||[]).map(r=>row(r.request,r.priority,r.frequency,r.why_it_matters)),row(''),
+    row('KEY QUOTES'),row('Quote','Theme','Type'),
+    ...d.key_quotes.map(q=>row(q.quote,q.theme,q.type)),row(''),
+    row('WHAT TO DO NEXT'),row('Product team',d.next_steps.product_team),
+    row('Account managers',d.next_steps.account_managers),row('Other teams',d.next_steps.other_teams),
+  ];
+  const blob=new Blob([rows.join('\n')],{type:'text/csv;charset=utf-8;'});
+  const url=URL.createObjectURL(blob), a=document.createElement('a');
+  a.href=url; a.download=`feedbacklens-${new Date().toISOString().split('T')[0]}.csv`;
+  a.click(); URL.revokeObjectURL(url);
 }
 
 // ─── Init ─────────────────────────────────────────────────────────────────────
-
-addInput(); // Start with one empty card
+addInput('feedback');
 </script>
 </body>
 </html>
