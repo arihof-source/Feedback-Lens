@@ -1,0 +1,1204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FeedbackLens — Customer Feedback Analyzer</title>
+  <style>
+    :root {
+      --bg: #0f1117;
+      --surface: #1a1d27;
+      --surface2: #22263a;
+      --border: #2e3348;
+      --accent: #6366f1;
+      --accent-light: #818cf8;
+      --accent-dim: rgba(99,102,241,0.15);
+      --text: #e2e8f0;
+      --text-muted: #94a3b8;
+      --green: #22c55e;
+      --yellow: #eab308;
+      --red: #ef4444;
+      --orange: #f97316;
+      --blue: #38bdf8;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    header {
+      border-bottom: 1px solid var(--border);
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .logo {
+      width: 32px; height: 32px;
+      background: var(--accent);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem;
+    }
+
+    header h1 { font-size: 1.1rem; font-weight: 600; }
+    header span { color: var(--text-muted); font-size: 0.85rem; margin-left: 0.5rem; }
+
+    .layout {
+      max-width: 1160px;
+      margin: 0 auto;
+      padding: 2rem;
+      display: grid;
+      grid-template-columns: 420px 1fr;
+      gap: 1.5rem;
+      align-items: start;
+    }
+
+    @media (max-width: 900px) {
+      .layout { grid-template-columns: 1fr; padding: 1rem; }
+    }
+
+    /* ── Cards ── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+    }
+
+    .card-title {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 1.1rem;
+    }
+
+    /* ── Form elements ── */
+    label {
+      display: block;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-bottom: 0.35rem;
+      margin-top: 1rem;
+    }
+    label:first-of-type { margin-top: 0; }
+
+    input[type="text"], input[type="password"], textarea, select {
+      width: 100%;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      padding: 0.6rem 0.8rem;
+      font-size: 0.88rem;
+      outline: none;
+      transition: border-color 0.15s;
+      font-family: inherit;
+    }
+
+    input:focus, textarea:focus, select:focus { border-color: var(--accent); }
+    textarea { resize: vertical; min-height: 120px; }
+    select option { background: var(--surface2); }
+
+    .api-note {
+      margin-top: 0.5rem;
+      padding: 0.65rem 0.85rem;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      font-size: 0.76rem;
+      color: var(--text-muted);
+      line-height: 1.55;
+      display: flex;
+      gap: 0.5rem;
+    }
+    .api-note a { color: var(--accent-light); text-decoration: none; }
+    .api-note a:hover { text-decoration: underline; }
+
+    /* ── Buttons ── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.55rem 1rem;
+      border-radius: 7px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-family: inherit;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: white;
+      width: 100%;
+      justify-content: center;
+      padding: 0.7rem;
+      font-size: 0.9rem;
+      margin-top: 1.25rem;
+    }
+    .btn-primary:hover:not(:disabled) { background: var(--accent-light); }
+    .btn-primary:disabled { opacity: 0.45; cursor: not-allowed; }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--text-muted);
+      border: 1px dashed var(--border);
+      width: 100%;
+      justify-content: center;
+      margin-top: 0.75rem;
+      padding: 0.6rem;
+    }
+    .btn-ghost:hover { border-color: var(--accent); color: var(--accent-light); }
+
+    .btn-icon {
+      background: transparent;
+      color: var(--text-muted);
+      border: none;
+      padding: 0.2rem 0.4rem;
+      font-size: 1rem;
+      line-height: 1;
+      border-radius: 4px;
+    }
+    .btn-icon:hover { background: var(--surface2); color: var(--text); }
+
+    /* ── Input cards ── */
+    #inputs-list { display: flex; flex-direction: column; gap: 0.85rem; }
+
+    .input-card {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .input-card-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.6rem 0.75rem;
+      border-bottom: 1px solid var(--border);
+      background: rgba(0,0,0,0.15);
+    }
+
+    .source-select {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: var(--accent-light);
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 0;
+      outline: none;
+      cursor: pointer;
+    }
+    .source-select option { background: var(--surface); color: var(--text); }
+
+    .input-card-body { padding: 0.75rem; }
+
+    .input-card textarea {
+      min-height: 100px;
+      background: transparent;
+      border: none;
+      padding: 0;
+      font-size: 0.83rem;
+      color: var(--text);
+      resize: vertical;
+    }
+    .input-card textarea:focus { outline: none; border: none; box-shadow: none; }
+
+    .input-card-footer {
+      padding: 0.4rem 0.75rem;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.72rem;
+      color: var(--text-muted);
+    }
+
+    .speaker-field {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+    }
+    .speaker-field label { margin: 0; font-size: 0.75rem; white-space: nowrap; }
+    .speaker-field input { font-size: 0.78rem; padding: 0.3rem 0.5rem; }
+
+    /* ── Image drop zone ── */
+    .image-drop-zone {
+      border: 2px dashed var(--border);
+      border-radius: 8px;
+      padding: 1.5rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.15s;
+      position: relative;
+    }
+    .image-drop-zone:hover, .image-drop-zone.drag-over {
+      border-color: var(--accent);
+      background: var(--accent-dim);
+    }
+    .image-drop-zone input[type="file"] {
+      position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
+    }
+    .image-drop-zone .drop-icon { font-size: 1.75rem; margin-bottom: 0.4rem; opacity: 0.5; }
+    .image-drop-zone p { font-size: 0.8rem; color: var(--text-muted); }
+    .image-drop-zone .drop-hint { font-size: 0.72rem; color: var(--text-muted); margin-top: 0.25rem; opacity: 0.7; }
+
+    .image-preview-wrap {
+      position: relative;
+      display: inline-block;
+      max-width: 100%;
+    }
+    .image-preview-wrap img {
+      max-width: 100%;
+      max-height: 200px;
+      border-radius: 6px;
+      display: block;
+    }
+    .image-preview-wrap .clear-img {
+      position: absolute;
+      top: 4px; right: 4px;
+      background: rgba(0,0,0,0.7);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 22px; height: 22px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    /* ── Totals bar ── */
+    .totals-bar {
+      margin-top: 0.75rem;
+      padding: 0.5rem 0.75rem;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .totals-bar span { color: var(--accent-light); font-weight: 600; }
+
+    /* ── Results ── */
+    .results-col { display: flex; flex-direction: column; gap: 1.25rem; }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.85rem;
+    }
+    @media (max-width: 600px) { .stats-grid { grid-template-columns: 1fr; } }
+
+    .stat-card {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem 1.1rem;
+    }
+    .stat-label { font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.2rem; }
+    .stat-value { font-size: 1.8rem; font-weight: 700; line-height: 1.1; }
+    .stat-sub { font-size: 0.75rem; color: var(--text-muted); margin-top: 0.2rem; }
+
+    .sentiment-bar {
+      display: flex;
+      height: 7px;
+      border-radius: 4px;
+      overflow: hidden;
+      margin-top: 0.5rem;
+      gap: 2px;
+    }
+    .seg { border-radius: 3px; transition: width 0.5s ease; }
+
+    /* ── Tabs ── */
+    .tabs {
+      display: flex;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+    }
+    .tab {
+      padding: 0.4rem 0.9rem;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-muted);
+      transition: all 0.12s;
+      font-family: inherit;
+    }
+    .tab.active { background: var(--accent-dim); border-color: var(--accent); color: var(--accent-light); }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* ── Theme cards ── */
+    .themes-list { display: flex; flex-direction: column; gap: 0.7rem; }
+    .theme-item {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem;
+    }
+    .theme-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.4rem; }
+    .theme-name { font-weight: 700; font-size: 0.95rem; }
+    .theme-count {
+      font-size: 0.72rem;
+      background: var(--accent-dim);
+      color: var(--accent-light);
+      padding: 0.15rem 0.55rem;
+      border-radius: 999px;
+      font-weight: 700;
+    }
+    .theme-summary { font-size: 0.84rem; color: var(--text-muted); margin-bottom: 0.5rem; line-height: 1.55; }
+    .theme-sentiment {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 0.12rem 0.5rem;
+      border-radius: 999px;
+    }
+    .sent-positive { background: rgba(34,197,94,0.12); color: var(--green); }
+    .sent-negative { background: rgba(239,68,68,0.12); color: var(--red); }
+    .sent-mixed { background: rgba(234,179,8,0.12); color: var(--yellow); }
+    .sent-neutral { background: rgba(148,163,184,0.12); color: var(--text-muted); }
+
+    /* ── Top asks ── */
+    .asks-list { display: flex; flex-direction: column; gap: 0.55rem; }
+    .ask-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.7rem;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.85rem 1rem;
+    }
+    .ask-rank {
+      min-width: 26px; height: 26px;
+      border-radius: 50%;
+      background: var(--accent-dim);
+      color: var(--accent-light);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.75rem; font-weight: 700;
+    }
+    .ask-body { flex: 1; }
+    .ask-name { font-weight: 600; font-size: 0.9rem; }
+    .ask-why { font-size: 0.82rem; color: var(--text-muted); margin-top: 0.2rem; line-height: 1.5; }
+    .priority-badge {
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 0.12rem 0.45rem;
+      border-radius: 999px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .prio-high { background: rgba(239,68,68,0.12); color: var(--red); }
+    .prio-medium { background: rgba(234,179,8,0.12); color: var(--yellow); }
+    .prio-low { background: rgba(34,197,94,0.12); color: var(--green); }
+
+    /* ── Quotes ── */
+    .quotes-list { display: flex; flex-direction: column; gap: 0.7rem; }
+    .quote-item {
+      border-left: 3px solid var(--accent);
+      padding: 0.7rem 1rem;
+      background: var(--surface2);
+      border-radius: 0 8px 8px 0;
+    }
+    .quote-text { font-size: 0.87rem; font-style: italic; color: var(--text); line-height: 1.55; }
+    .quote-meta { font-size: 0.72rem; color: var(--text-muted); margin-top: 0.3rem; }
+
+    /* ── Next steps ── */
+    .next-steps-grid { display: flex; flex-direction: column; gap: 1rem; }
+
+    .team-block {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .team-block-header {
+      padding: 0.65rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .team-product .team-block-header { background: rgba(99,102,241,0.12); color: var(--accent-light); }
+    .team-account .team-block-header { background: rgba(34,197,94,0.1); color: var(--green); }
+    .team-other .team-block-header { background: rgba(56,189,248,0.1); color: var(--blue); }
+
+    .team-block-body {
+      padding: 1rem;
+      font-size: 0.87rem;
+      color: var(--text);
+      line-height: 1.65;
+      background: var(--surface2);
+    }
+
+    /* ── States ── */
+    .empty-state {
+      text-align: center;
+      padding: 4rem 2rem;
+      color: var(--text-muted);
+    }
+    .empty-icon { font-size: 2.5rem; margin-bottom: 0.75rem; opacity: 0.35; }
+    .empty-state h3 { font-size: 1rem; margin-bottom: 0.4rem; color: var(--text); }
+    .empty-state p { font-size: 0.84rem; max-width: 320px; margin: 0 auto; }
+
+    .loading-box { text-align: center; padding: 3rem; }
+    .spinner {
+      width: 38px; height: 38px;
+      border: 3px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.75s linear infinite;
+      margin: 0 auto 1rem;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading-box p { color: var(--text-muted); font-size: 0.88rem; }
+    .loading-step { margin-top: 0.4rem; font-size: 0.8rem; color: var(--accent-light); }
+
+    .error-box {
+      background: rgba(239,68,68,0.1);
+      border: 1px solid rgba(239,68,68,0.3);
+      border-radius: 8px;
+      padding: 0.8rem 1rem;
+      color: var(--red);
+      font-size: 0.84rem;
+      margin-top: 0.75rem;
+    }
+
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">🔍</div>
+  <h1>FeedbackLens</h1>
+  <span>Understand what your customers are telling you</span>
+</header>
+
+<div class="layout">
+
+  <!-- ── Left: inputs ── -->
+  <div>
+    <div class="card">
+      <div class="card-title">Setup</div>
+
+      <label for="context" style="margin-top:0">What's your product? <span style="font-weight:400">(optional but helps)</span></label>
+      <input type="text" id="context" placeholder="e.g. temperature monitoring software for food & pharma companies" />
+    </div>
+
+    <div class="card" style="margin-top:1rem">
+      <div class="card-title">Your feedback sources</div>
+
+      <div id="inputs-list"></div>
+
+      <button class="btn btn-ghost" onclick="addInput()">+ Add another source</button>
+
+      <div class="totals-bar" id="totals-bar" style="display:none">
+        Loading <span id="total-summary">—</span>
+      </div>
+
+      <div style="margin-top:1.1rem">
+        <label for="analysis-type" style="margin-top:0">What do you want to focus on?</label>
+        <select id="analysis-type">
+          <option value="balanced">Overall picture — themes, feelings, and requests</option>
+          <option value="churn">At-risk customers — surface complaints and warning signs</option>
+          <option value="growth">Happy customers — what's working and why they stay</option>
+          <option value="roadmap">What to build next — rank feature requests by demand</option>
+        </select>
+      </div>
+
+      <button class="btn btn-primary" id="analyze-btn" onclick="analyze()">Analyze feedback</button>
+      <div id="error-box" class="error-box hidden"></div>
+    </div>
+
+    <!-- Examples -->
+    <div class="card" style="margin-top:1rem">
+      <div class="card-title">Try an example</div>
+      <div style="display:flex;flex-wrap:wrap;gap:0.5rem;margin-top:0.25rem">
+        <button class="btn" style="background:var(--surface2);border:1px solid var(--border);font-size:0.8rem" onclick="loadExample('saas')">SaaS feedback</button>
+        <button class="btn" style="background:var(--surface2);border:1px solid var(--border);font-size:0.8rem" onclick="loadExample('coldchain')">Cold chain feedback</button>
+        <button class="btn" style="background:var(--surface2);border:1px solid var(--border);font-size:0.8rem" onclick="loadExample('mixed')">Mixed sources</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Right: results ── -->
+  <div class="results-col">
+
+    <!-- Empty -->
+    <div class="card empty-state" id="empty-state">
+      <div class="empty-icon">💬</div>
+      <h3>Add your feedback sources on the left</h3>
+      <p>Mix and match — paste support tickets, drop in a call transcript, or upload a screenshot. Then click Analyze.</p>
+    </div>
+
+    <!-- Loading -->
+    <div class="card loading-box hidden" id="loading-state">
+      <div class="spinner"></div>
+      <p>Reading through your feedback…</p>
+      <div class="loading-step" id="loading-step">Getting started</div>
+    </div>
+
+    <!-- Results -->
+    <div id="results" class="hidden">
+
+      <!-- Stats -->
+      <div class="stats-grid" id="stats-row"></div>
+
+      <!-- Tabs -->
+      <div class="card" style="margin-top:0">
+        <div class="tabs" style="margin-bottom:1.25rem">
+          <button class="tab active" onclick="switchTab('themes')">What came up</button>
+          <button class="tab" onclick="switchTab('asks')">Top requests</button>
+          <button class="tab" onclick="switchTab('quotes')">In their words</button>
+          <button class="tab" onclick="switchTab('nextsteps')">What to do next</button>
+        </div>
+
+        <div id="tab-themes" class="tab-panel active"></div>
+        <div id="tab-asks" class="tab-panel"></div>
+        <div id="tab-quotes" class="tab-panel"></div>
+        <div id="tab-nextsteps" class="tab-panel"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ─── State ───────────────────────────────────────────────────────────────────
+
+let inputCards = [];
+let nextId = 0;
+
+const SOURCE_OPTIONS = [
+  { value: 'feedback',    label: 'Pasted feedback',      icon: '📝', isTranscript: false },
+  { value: 'fathom',      label: 'Fathom transcript',    icon: '🎙', isTranscript: true  },
+  { value: 'fireflies',   label: 'Fireflies transcript', icon: '🎙', isTranscript: true  },
+  { value: 'otter',       label: 'Otter transcript',     icon: '🎙', isTranscript: true  },
+  { value: 'gong',        label: 'Gong transcript',      icon: '🎙', isTranscript: true  },
+  { value: 'transcript',  label: 'Other transcript',     icon: '🎙', isTranscript: true  },
+  { value: 'image',       label: 'Screenshot / photo',   icon: '🖼',  isTranscript: false },
+];
+
+const PLACEHOLDERS = {
+  feedback:   'Paste feedback here — support emails, NPS responses, survey answers, app reviews. One piece of feedback per line works best.',
+  fathom:     'Paste your Fathom transcript. Speaker labels and timestamps are handled automatically.',
+  fireflies:  'Paste your Fireflies transcript. The full text including speaker names is fine.',
+  otter:      'Paste your Otter transcript. Any export format works.',
+  gong:       'Paste your Gong call transcript.',
+  transcript: 'Paste any call or meeting transcript — Zoom, Teams, Google Meet, or plain text.',
+};
+
+// ─── Examples ────────────────────────────────────────────────────────────────
+
+const EXAMPLES = {
+  saas: {
+    source: 'feedback',
+    text: `The dashboard takes forever to load when we have more than 500 records. Makes it unusable for our team during morning standups.
+Love the new kanban view! Finally something our whole team can use without training.
+Integrations with Salesforce are broken again. This is the 3rd time this month. We're considering switching.
+Why can't I export to CSV? This feels like table stakes for a tool like this.
+Onboarding was smooth but I got totally lost after day 3. No one reached out.
+The mobile app crashes every time I try to upload a file. iPhone 14, latest iOS.
+Your support team responded in 10 minutes on a Sunday. That's insane (in a good way). Renewing for sure.
+The pricing jumped 40% with no warning. We're a 5-person startup. This hurt.
+Would love Slack notifications when a task is overdue. Currently we miss things constantly.
+The AI suggestions are surprisingly good. Saved me 2 hours this week alone.
+Bulk actions are missing. I have to update statuses one by one which is painful.
+We've been asking for a proper audit log for 8 months. Any update?
+Setup took under 30 minutes. Compared to our last tool (Jira) this is night and day.
+Really needs dark mode. Working late and the white UI is brutal.
+The search doesn't find anything unless you spell it perfectly. No fuzzy search?
+Our team lead wants granular permission controls. Right now it's all-or-nothing.
+Would pay more if there was a better mobile experience. Right now it's an afterthought.
+Can't figure out how to set recurring tasks. Spent 20 min looking for it.`
+  },
+  coldchain: {
+    source: 'feedback',
+    text: `Temperature alerts fire 10-15 minutes after the actual excursion. By then it's too late for perishables.
+The sensor battery life is way better than the last vendor we used. 6 months without a swap.
+We failed an FDA audit because the reports didn't include GPS coordinates. Need that ASAP.
+Calibration reminders are a lifesaver. Used to miss these constantly.
+The API docs are incomplete. We've been trying to integrate with our WMS for 3 weeks.
+Dashboard is clean but we need multi-site view. Managing 8 facilities means lots of tab switching.
+Alert fatigue is a real problem. We get 200+ alerts a day and 90% are false positives.
+Would love if the system could auto-generate excursion reports in the format our QA team needs.
+We had a cold room failure at 2am and the escalation to our on-call worked perfectly.
+The predictive maintenance feature is interesting but the false positive rate is too high to trust.
+Our compliance team needs 21 CFR Part 11 compliant audit trails. Is this on the roadmap?
+Sensor setup takes too long. 45 minutes per device is not scalable for a 500-sensor deployment.
+We love that it works offline. Our cold storage has terrible cell coverage.
+The European data residency option would unblock two of our enterprise prospects.
+Custom alert thresholds per product type would be huge for us — pharma and food have different tolerances.
+Integration with our ERP (SAP) is critical but we're told it's 12 months out. That's too long.
+The anomaly detection caught a slow refrigerant leak before it became a full failure. ROI proven.`
+  },
+  transcript: {
+    source: 'fathom',
+    speaker: 'Sarah',
+    text: `[00:00:45] Sarah (Customer): So the main issue we keep running into is the alert volume. Our team is getting hundreds of notifications a day and most of them are noise. People have started ignoring them, which kind of defeats the purpose.
+
+[00:01:18] Sarah (Customer): Yeah, ideally we could set different thresholds per product type. Pharma has completely different tolerances than our food side. Right now it's one setting for everything.
+
+[00:02:05] Sarah (Customer): Also — and this comes up every quarter — our QA team needs the excursion reports in a specific format for our auditors. We've been manually reformatting exports for 18 months. It's a whole thing.
+
+[00:03:41] Sarah (Customer): Honestly the data residency question is the blocker for our EU expansion. Our legal team won't sign off without EU data hosting. We're getting pressure to make a decision by Q3.
+
+[00:04:50] Sarah (Customer): The core product is great, by the way. The offline mode saved us during a connectivity outage last month. That's genuinely differentiated — our last vendor couldn't do that.
+
+[00:05:30] Sarah (Customer): One more thing — onboarding a new facility takes forever. Setting up 200 sensors at 45 minutes each just isn't feasible. We need a bulk provisioning workflow.`
+  }
+};
+
+function loadExample(type) {
+  // Clear existing inputs
+  inputCards = [];
+  nextId = 0;
+  document.getElementById('inputs-list').innerHTML = '';
+
+  if (type === 'saas') {
+    addInput(EXAMPLES.saas.source, EXAMPLES.saas.text);
+    document.getElementById('context').value = 'Project management software for small and mid-size businesses';
+  } else if (type === 'coldchain') {
+    addInput(EXAMPLES.coldchain.source, EXAMPLES.coldchain.text);
+    document.getElementById('context').value = 'Temperature monitoring software for food and pharmaceutical companies';
+  } else if (type === 'mixed') {
+    addInput(EXAMPLES.coldchain.source, EXAMPLES.coldchain.text);
+    addInput(EXAMPLES.transcript.source, EXAMPLES.transcript.text, EXAMPLES.transcript.speaker);
+    document.getElementById('context').value = 'Temperature monitoring software for food and pharmaceutical companies';
+  }
+}
+
+// ─── Input card management ────────────────────────────────────────────────────
+
+function addInput(sourceValue = 'feedback', initialText = '', initialSpeaker = '') {
+  const id = nextId++;
+  inputCards.push({ id, source: sourceValue, imageData: null });
+
+  const wrap = document.createElement('div');
+  wrap.className = 'input-card';
+  wrap.id = `card-${id}`;
+
+  const optionsHTML = SOURCE_OPTIONS.map(o =>
+    `<option value="${o.value}" ${o.value === sourceValue ? 'selected' : ''}>${o.icon} ${o.label}</option>`
+  ).join('');
+
+  const isImage = sourceValue === 'image';
+  const isTranscript = SOURCE_OPTIONS.find(o => o.value === sourceValue)?.isTranscript;
+
+  wrap.innerHTML = `
+    <div class="input-card-header">
+      <select class="source-select" onchange="changeSource(${id}, this.value)">
+        ${optionsHTML}
+      </select>
+      <button class="btn-icon" onclick="removeInput(${id})" title="Remove">×</button>
+    </div>
+    <div class="input-card-body" id="body-${id}">
+      ${isImage ? imageZoneHTML(id) : textAreaHTML(id, sourceValue, initialText, isTranscript, initialSpeaker)}
+    </div>
+    <div class="input-card-footer" id="footer-${id}">
+      <span id="count-${id}">${isImage ? '' : countLabel(initialText, sourceValue)}</span>
+      ${isTranscript && !isImage ? `<span style="color:var(--accent-light);font-size:0.7rem">Timestamps & speaker labels handled automatically</span>` : ''}
+    </div>
+  `;
+
+  document.getElementById('inputs-list').appendChild(wrap);
+  updateTotals();
+}
+
+function textAreaHTML(id, source, text, isTranscript, speaker) {
+  const placeholder = PLACEHOLDERS[source] || PLACEHOLDERS.transcript;
+  return `
+    <textarea id="ta-${id}" placeholder="${placeholder}" oninput="onTextInput(${id})">${escHtml(text)}</textarea>
+    ${isTranscript ? `
+      <div class="speaker-field">
+        <label for="speaker-${id}">Customer's name in transcript (optional):</label>
+        <input type="text" id="speaker-${id}" value="${escHtml(speaker)}" placeholder="e.g. Sarah, Customer" />
+      </div>` : ''}
+  `;
+}
+
+function imageZoneHTML(id) {
+  return `
+    <div class="image-drop-zone" id="drop-${id}"
+         ondragover="event.preventDefault();this.classList.add('drag-over')"
+         ondragleave="this.classList.remove('drag-over')"
+         ondrop="handleDrop(event,${id})">
+      <input type="file" accept="image/*" onchange="handleFile(event,${id})" />
+      <div class="drop-icon">🖼</div>
+      <p>Drop a screenshot here, or click to choose a file</p>
+      <div class="drop-hint">Works with screenshots of reviews, surveys, Slack messages, emails, and more</div>
+    </div>
+    <div id="preview-${id}" style="margin-top:0.5rem;display:none"></div>
+  `;
+}
+
+function escHtml(str) {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function countLabel(text, source) {
+  const lines = text.split('\n').filter(l => l.trim()).length;
+  if (!lines) return '';
+  if (source === 'feedback') return `${lines} ${lines === 1 ? 'entry' : 'entries'}`;
+  return `${lines} lines`;
+}
+
+function onTextInput(id) {
+  const ta = document.getElementById(`ta-${id}`);
+  const card = inputCards.find(c => c.id === id);
+  if (ta && card) {
+    const el = document.getElementById(`count-${id}`);
+    if (el) el.textContent = countLabel(ta.value, card.source);
+  }
+  updateTotals();
+}
+
+function changeSource(id, newSource) {
+  const card = inputCards.find(c => c.id === id);
+  if (!card) return;
+  card.source = newSource;
+  card.imageData = null;
+
+  const isImage = newSource === 'image';
+  const isTranscript = SOURCE_OPTIONS.find(o => o.value === newSource)?.isTranscript;
+  const body = document.getElementById(`body-${id}`);
+  const footer = document.getElementById(`footer-${id}`);
+
+  body.innerHTML = isImage ? imageZoneHTML(id) : textAreaHTML(id, newSource, '', isTranscript, '');
+  footer.innerHTML = `
+    <span id="count-${id}"></span>
+    ${isTranscript && !isImage ? `<span style="color:var(--accent-light);font-size:0.7rem">Timestamps & speaker labels handled automatically</span>` : ''}
+  `;
+  updateTotals();
+}
+
+function removeInput(id) {
+  inputCards = inputCards.filter(c => c.id !== id);
+  const el = document.getElementById(`card-${id}`);
+  if (el) el.remove();
+  updateTotals();
+}
+
+function updateTotals() {
+  const bar = document.getElementById('totals-bar');
+  const summary = document.getElementById('total-summary');
+
+  let textCount = 0, transcriptCount = 0, imageCount = 0;
+  inputCards.forEach(card => {
+    if (card.source === 'image') {
+      if (card.imageData) imageCount++;
+    } else {
+      const ta = document.getElementById(`ta-${card.id}`);
+      const lines = ta ? ta.value.split('\n').filter(l => l.trim()).length : 0;
+      if (SOURCE_OPTIONS.find(o => o.value === card.source)?.isTranscript) {
+        if (lines) transcriptCount++;
+      } else {
+        textCount += lines;
+      }
+    }
+  });
+
+  const parts = [];
+  if (textCount) parts.push(`<span>${textCount}</span> feedback entries`);
+  if (transcriptCount) parts.push(`<span>${transcriptCount}</span> transcript${transcriptCount > 1 ? 's' : ''}`);
+  if (imageCount) parts.push(`<span>${imageCount}</span> screenshot${imageCount > 1 ? 's' : ''}`);
+
+  if (parts.length) {
+    bar.style.display = 'flex';
+    summary.innerHTML = parts.join(' · ');
+  } else {
+    bar.style.display = 'none';
+  }
+}
+
+// ─── Image handling ───────────────────────────────────────────────────────────
+
+function handleFile(event, id) {
+  const file = event.target.files[0];
+  if (file) readImageFile(file, id);
+}
+
+function handleDrop(event, id) {
+  event.preventDefault();
+  document.getElementById(`drop-${id}`)?.classList.remove('drag-over');
+  const file = event.dataTransfer.files[0];
+  if (file && file.type.startsWith('image/')) readImageFile(file, id);
+}
+
+function readImageFile(file, id) {
+  const reader = new FileReader();
+  reader.onload = e => {
+    const dataUrl = e.target.result;
+    const card = inputCards.find(c => c.id === id);
+    if (card) card.imageData = dataUrl;
+
+    const preview = document.getElementById(`preview-${id}`);
+    const drop = document.getElementById(`drop-${id}`);
+    if (preview) {
+      preview.style.display = 'block';
+      preview.innerHTML = `
+        <div class="image-preview-wrap">
+          <img src="${dataUrl}" alt="Screenshot preview" />
+          <button class="clear-img" onclick="clearImage(${id})" title="Remove image">×</button>
+        </div>`;
+    }
+    if (drop) drop.style.display = 'none';
+
+    const count = document.getElementById(`count-${id}`);
+    if (count) count.textContent = '1 image';
+    updateTotals();
+  };
+  reader.readAsDataURL(file);
+}
+
+function clearImage(id) {
+  const card = inputCards.find(c => c.id === id);
+  if (card) card.imageData = null;
+  const preview = document.getElementById(`preview-${id}`);
+  const drop = document.getElementById(`drop-${id}`);
+  if (preview) { preview.style.display = 'none'; preview.innerHTML = ''; }
+  if (drop) drop.style.display = 'block';
+  const count = document.getElementById(`count-${id}`);
+  if (count) count.textContent = '';
+  updateTotals();
+}
+
+// ─── Analysis ────────────────────────────────────────────────────────────────
+
+function showError(msg) {
+  const box = document.getElementById('error-box');
+  box.textContent = msg;
+  box.classList.remove('hidden');
+}
+
+function clearError() {
+  document.getElementById('error-box').classList.add('hidden');
+}
+
+function setStep(msg) {
+  document.getElementById('loading-step').textContent = msg;
+}
+
+async function analyze() {
+  clearError();
+  const context = document.getElementById('context').value.trim();
+  const focus = document.getElementById('analysis-type').value;
+
+  if (!inputCards.length) return showError('Please add at least one feedback source.');
+
+  // Validate something has content
+  let hasContent = false;
+  inputCards.forEach(card => {
+    if (card.source === 'image' && card.imageData) hasContent = true;
+    const ta = document.getElementById(`ta-${card.id}`);
+    if (ta && ta.value.trim()) hasContent = true;
+  });
+  if (!hasContent) return showError('Please paste some feedback or add a screenshot before analyzing.');
+
+  document.getElementById('empty-state').classList.add('hidden');
+  document.getElementById('results').classList.add('hidden');
+  document.getElementById('loading-state').classList.remove('hidden');
+  document.getElementById('analyze-btn').disabled = true;
+
+  const focusInstructions = {
+    balanced:  'Give a balanced overview covering all themes, feelings, and requests.',
+    churn:     'Focus on complaints, frustrations, and any signs that customers might leave.',
+    growth:    'Focus on what customers love, why they stay, and opportunities to expand.',
+    roadmap:   'Focus on what customers are asking for and rank those requests by how often they come up.'
+  };
+
+  const systemPrompt = `You are helping a business team understand what their customers are saying. Your job is to turn raw feedback — from support emails, call transcripts, surveys, screenshots, and reviews — into clear, plain-language insights that anyone on the team can understand and act on.
+
+${context ? `The product is: ${context}.` : ''}
+${focusInstructions[focus]}
+
+Write everything in plain English — no jargon. Imagine you're briefing a cross-functional team that includes people who build the product, people who talk to customers every day, and leadership.
+
+Respond ONLY with raw valid JSON — no markdown, no code fences, no explanation before or after. Start your response with { and end with }. Use this exact structure:
+{
+  "summary": {
+    "total_entries": number,
+    "sentiment": { "positive": number, "neutral": number, "negative": number },
+    "headline": "One plain-English sentence summing up what customers are feeling right now"
+  },
+  "themes": [
+    {
+      "name": "Short, plain-English theme title",
+      "count": number,
+      "sentiment": "positive|negative|mixed|neutral",
+      "summary": "2-3 sentences explaining what customers said about this and why it matters to the business. No jargon.",
+      "representative_quotes": ["direct quote 1", "direct quote 2"]
+    }
+  ],
+  "top_requests": [
+    {
+      "request": "Plain description of what customers are asking for",
+      "priority": "high|medium|low",
+      "frequency": number,
+      "why_it_matters": "1-2 sentences on the customer impact and business case in plain language"
+    }
+  ],
+  "key_quotes": [
+    {
+      "quote": "Verbatim or near-verbatim from the customer",
+      "theme": "Which theme this belongs to",
+      "type": "pain|delight|request|churn-risk"
+    }
+  ],
+  "next_steps": {
+    "product_team": "3-4 sentences. Specific, plain-language recommendations for the people who build and improve the product. What to fix, build, or investigate — and in what order.",
+    "account_managers": "3-4 sentences. Specific actions for the people who own customer relationships. Which customers to call, what to say, what to watch out for.",
+    "other_teams": "2-3 sentences. What support, marketing, or leadership should know or do based on this feedback."
+  }
+}
+
+Return 3-6 themes, 3-5 top requests, and 4-6 key quotes.`;
+
+  // Build content array for user message
+  const contentParts = [];
+
+  // Collect text inputs
+  const textSections = [];
+  inputCards.forEach(card => {
+    if (card.source === 'image') return;
+    const ta = document.getElementById(`ta-${card.id}`);
+    if (!ta || !ta.value.trim()) return;
+    const sourceMeta = SOURCE_OPTIONS.find(o => o.value === card.source);
+    const speakerEl = document.getElementById(`speaker-${card.id}`);
+    const speaker = speakerEl ? speakerEl.value.trim() : '';
+
+    if (sourceMeta?.isTranscript) {
+      const toolName = { fathom:'Fathom', fireflies:'Fireflies', otter:'Otter', gong:'Gong', transcript:'a call recording tool' }[card.source] || 'a call recording tool';
+      textSections.push(`--- ${toolName.toUpperCase()} TRANSCRIPT${speaker ? ` (customer: ${speaker})` : ''} ---\n${ta.value.trim()}`);
+    } else {
+      textSections.push(`--- CUSTOMER FEEDBACK ENTRIES ---\n${ta.value.trim()}`);
+    }
+  });
+
+  if (textSections.length) {
+    contentParts.push({ type: 'text', text: `Please analyze the following customer feedback:\n\n${textSections.join('\n\n')}` });
+  }
+
+  // Add images
+  inputCards.forEach(card => {
+    if (card.source === 'image' && card.imageData) {
+      if (!contentParts.length) {
+        contentParts.push({ type: 'text', text: 'Please analyze the customer feedback in these screenshots:' });
+      }
+      contentParts.push({
+        type: 'image_url',
+        image_url: { url: card.imageData, detail: 'high' }
+      });
+    }
+  });
+
+  if (!contentParts.length) {
+    document.getElementById('loading-state').classList.add('hidden');
+    document.getElementById('empty-state').classList.remove('hidden');
+    document.getElementById('analyze-btn').disabled = false;
+    return showError('Nothing to analyze. Please add some feedback content.');
+  }
+
+  try {
+    setStep('Sending to OpenAI…');
+
+    const res = await fetch('/api/analyze', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        system: systemPrompt,
+        content: contentParts
+      })
+    });
+
+    setStep('Pulling out the insights…');
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err?.error?.message || `API error ${res.status}`);
+    }
+
+    const data = await res.json();
+    const analysis = JSON.parse(data.choices[0].message.content);
+    renderResults(analysis);
+
+  } catch (e) {
+    document.getElementById('loading-state').classList.add('hidden');
+    document.getElementById('empty-state').classList.remove('hidden');
+    showError(`Something went wrong: ${e.message}`);
+  } finally {
+    document.getElementById('analyze-btn').disabled = false;
+  }
+}
+
+// ─── Render ───────────────────────────────────────────────────────────────────
+
+function switchTab(name) {
+  const names = ['themes','asks','quotes','nextsteps'];
+  document.querySelectorAll('.tab').forEach((t, i) => t.classList.toggle('active', names[i] === name));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById(`tab-${name}`).classList.add('active');
+}
+
+function renderResults(d) {
+  document.getElementById('loading-state').classList.add('hidden');
+  document.getElementById('results').classList.remove('hidden');
+  renderStats(d.summary);
+  renderThemes(d.themes);
+  renderAsks(d.top_requests);
+  renderQuotes(d.key_quotes);
+  renderNextSteps(d.next_steps);
+}
+
+function renderStats(s) {
+  const total = s.sentiment.positive + s.sentiment.neutral + s.sentiment.negative;
+  const pct = v => total ? Math.round(v / total * 100) : 0;
+  const pos = pct(s.sentiment.positive);
+  const neu = pct(s.sentiment.neutral);
+  const neg = pct(s.sentiment.negative);
+
+  document.getElementById('stats-row').innerHTML = `
+    <div class="stat-card">
+      <div class="stat-label">Pieces of feedback</div>
+      <div class="stat-value" style="color:var(--accent-light)">${s.total_entries}</div>
+      <div class="stat-sub">analyzed across all sources</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Overall feeling</div>
+      <div style="display:flex;gap:0.6rem;margin:0.4rem 0;font-size:0.82rem;font-weight:700">
+        <span style="color:var(--green)">😊 ${pos}%</span>
+        <span style="color:var(--text-muted)">😐 ${neu}%</span>
+        <span style="color:var(--red)">😟 ${neg}%</span>
+      </div>
+      <div class="sentiment-bar">
+        <div class="seg" style="width:${pos}%;background:var(--green)"></div>
+        <div class="seg" style="width:${neu}%;background:var(--text-muted)"></div>
+        <div class="seg" style="width:${neg}%;background:var(--red)"></div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">The short version</div>
+      <div style="font-size:0.84rem;line-height:1.5;margin-top:0.35rem;color:var(--text)">${s.headline}</div>
+    </div>
+  `;
+}
+
+function renderThemes(themes) {
+  document.getElementById('tab-themes').innerHTML = `
+    <div class="themes-list">
+      ${themes.map(t => `
+        <div class="theme-item">
+          <div class="theme-header">
+            <span class="theme-name">${t.name}</span>
+            <span class="theme-count">${t.count} mentions</span>
+          </div>
+          <div class="theme-summary">${t.summary}</div>
+          <span class="theme-sentiment sent-${t.sentiment}">
+            ${{ positive:'😊 Positive', negative:'😟 Negative', mixed:'😬 Mixed', neutral:'😐 Neutral' }[t.sentiment] || t.sentiment}
+          </span>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+function renderAsks(requests) {
+  if (!requests?.length) {
+    document.getElementById('tab-asks').innerHTML = `<p style="color:var(--text-muted);font-size:0.85rem">No specific requests found in this feedback.</p>`;
+    return;
+  }
+  document.getElementById('tab-asks').innerHTML = `
+    <div class="asks-list">
+      ${requests.map((r, i) => `
+        <div class="ask-item">
+          <div class="ask-rank">${i+1}</div>
+          <div class="ask-body">
+            <div style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;margin-bottom:0.25rem">
+              <span class="ask-name">${r.request}</span>
+              <span class="priority-badge prio-${r.priority}">${r.priority}</span>
+              <span style="font-size:0.72rem;color:var(--text-muted)">${r.frequency} ${r.frequency === 1 ? 'person' : 'people'}</span>
+            </div>
+            <div class="ask-why">${r.why_it_matters}</div>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+function renderQuotes(quotes) {
+  const colors = { pain:'var(--red)', delight:'var(--green)', request:'var(--accent-light)', 'churn-risk':'var(--orange)' };
+  const labels = { pain:'⚠ Complaint', delight:'✓ Positive', request:'◆ Request', 'churn-risk':'🔥 At-risk' };
+  document.getElementById('tab-quotes').innerHTML = `
+    <div class="quotes-list">
+      ${quotes.map(q => `
+        <div class="quote-item" style="border-left-color:${colors[q.type] || 'var(--accent)'}">
+          <div class="quote-text">"${q.quote}"</div>
+          <div class="quote-meta">
+            <span style="color:${colors[q.type] || 'var(--accent-light)'}">${labels[q.type] || q.type}</span>
+            · ${q.theme}
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+function renderNextSteps(ns) {
+  if (!ns) {
+    document.getElementById('tab-nextsteps').innerHTML = `<p style="color:var(--text-muted);font-size:0.85rem">No recommendations available.</p>`;
+    return;
+  }
+  document.getElementById('tab-nextsteps').innerHTML = `
+    <div class="next-steps-grid">
+      <div class="team-block team-product">
+        <div class="team-block-header">🔧 Product team</div>
+        <div class="team-block-body">${ns.product_team}</div>
+      </div>
+      <div class="team-block team-account">
+        <div class="team-block-header">📞 Account managers & customer success</div>
+        <div class="team-block-body">${ns.account_managers}</div>
+      </div>
+      <div class="team-block team-other">
+        <div class="team-block-header">🏢 Support, marketing & leadership</div>
+        <div class="team-block-body">${ns.other_teams}</div>
+      </div>
+    </div>
+  `;
+}
+
+// ─── Init ─────────────────────────────────────────────────────────────────────
+
+addInput(); // Start with one empty card
+</script>
+</body>
+</html>
